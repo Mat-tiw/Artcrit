@@ -1,22 +1,18 @@
-import { Sequelize, DataTypes, Model } from "sequelize";
+import { Sequelize, DataTypes } from "sequelize";
 import sequelize from "../config/dbconfig.js";
 const User = sequelize.define(
-  "user",
+  "ac_user",
   {
-    iduser: {
+    id_user: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    username: {
+    user_name: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    u_password: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    user_email: {
+    user_password: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -32,18 +28,20 @@ const User = sequelize.define(
       type: DataTypes.DATE,
       allowNull: true,
     },
+    user_email: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     Sequelize,
     modelName: "User",
-    tableName: "user",
+    tableName: "ac_user",
     timestamps: true,
     createdAt: "created_at",
     updatedAt: "updated_at",
-    id: "iduser",
+    id: "id_user",
   }
 );
-(async () => {
-  await sequelize.sync();
-})();
+
 export default User;

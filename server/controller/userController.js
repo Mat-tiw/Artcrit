@@ -12,16 +12,20 @@ export const allUser = async (req, res) => {
 export const addUser = async (req, res) => {
   try {
     const user_avatar = "/upload/avatar/defAvatar.jpg"
-    const { username, pwd, user_email } = req.body;
-    let u_password = await bcrypt.hash(pwd,13)
+    const { user, pwd, email } = req.body;
+    const user_name = user
+    const user_email = email
+    let user_password = await bcrypt.hash(pwd,13)
     const newUser = await User.create({
-      username,
-      u_password,
+      user_name,
+      user_password,
       user_email,
       user_avatar,
     });
 
     res.status(201).json(newUser);
+
+
   } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).json({ error: "Internal Server Error" });
