@@ -55,8 +55,6 @@ const DragAndDrop = () => {
         reader.onload = function () {
           previewArray.push(reader.result);
           setPreviews([...previewArray]);
-
-          // Add the dropped file to the 'files' array
           fileArray.push(file);
           setFiles([...fileArray]);
         };

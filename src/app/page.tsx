@@ -3,10 +3,39 @@ import { MiniProfile } from "./components/ui/miniprofile";
 import * as React from "react";
 import Banner from "./components/Test";
 import { Sidebar } from "./components/ui/sidebar";
-import { Post } from "./components/ui/post";
 import Avatar from "@mui/material/Avatar";
 import DragAndDrop from "./components/ui/dragndrop";
+import { useEffect,useState } from "react"
+import { Posts } from "./components/ui/posts";
+import axios from "axios";
+interface Image {
+  id_image: number;
+  image_path: string;
+}
+
+interface Post {
+  id_post: number;
+  post_title: string;
+  post_badge: string;
+  created_at: string;
+  user_id: number;
+  ac_images: Image[];
+}
 export default function Home() {
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get("http://localhost:3030/api/post");
+        setPosts(response.data);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
   return (
     <React.Fragment>
       <Banner />
@@ -27,7 +56,16 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <Post />
+          {posts.map((post) => (
+        <Posts
+          key={post.id_post}
+          title={post.post_title}
+          badge={post.post_badge}
+          userName={String(post.user_id)} // Convert user_id to string or use the actual username property if available
+          date={post.created_at}
+          images={post.ac_images}
+        />
+      ))}
         </div>
         <div className="text-white basis-[20%] ">
           <h1>right content</h1>
