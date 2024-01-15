@@ -20,10 +20,17 @@ interface Post {
   created_at: string;
   user_id: number;
   ac_images: Image[];
+  ac_user:User;
+}
+interface User{
+  user_name:string;
+  user_email:string;
+  user_avatar:string;
+  id_user:number;
 }
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
-
+  const userPic = localStorage.getItem('userPic');
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -42,7 +49,7 @@ export default function Home() {
       <Banner />
       <div className="bg-primaryBg flex flex-row">
         <div className="text-white basis-[20%] flex flex-col">
-          <MiniProfile userName="Placeholder" />
+          <MiniProfile  />
           <Sidebar variant="default" />
         </div>
         <div className="text-white basis-[60%]">
@@ -51,7 +58,7 @@ export default function Home() {
               Create Post
             </div>
             <div className="pl-5 mb-5 flex pt-4">
-              <Avatar />
+              <Avatar src={userPic !== null ? userPic : ''} />
               <div className="pl-4 -translate-y-3 w-full">
                 <DragAndDrop />
               </div>
@@ -62,9 +69,10 @@ export default function Home() {
               key={post.id_post}
               title={post.post_title}
               badge={post.post_badge}
-              userName={String(post.user_id)} // Convert user_id to string or use the actual username property if available
+              userName={post.ac_user.user_name} // Convert user_id to string or use the actual username property if available
               date={post.created_at}
               images={post.ac_images}
+              userPic={post.ac_user.user_avatar}
             />
           ))}
         </div>

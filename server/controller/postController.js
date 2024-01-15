@@ -24,8 +24,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 export const createPost = async (req, res) => {
-  let userId = 1;
-  const { postTitles, postBadge } = req.body;
+  const { postTitles, postBadge,userId } = req.body;
   const files = req.files;
   try {
     const post = await Post.create({

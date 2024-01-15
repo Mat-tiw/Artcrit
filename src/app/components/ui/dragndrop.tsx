@@ -10,7 +10,7 @@ const DragAndDrop = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [postTitles, setPostTitles] = useState<string>("");
   const [postBadge, setPostBadge] = useState<string>("");
-
+  const userId = localStorage.getItem("userId");
   const handlePostTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPostTitles(e.target.value);
   };
@@ -21,12 +21,14 @@ const DragAndDrop = () => {
 
   const handleOnSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    console.log()
     try {
       const formData = new FormData();
       formData.append("postTitles", postTitles);
       formData.append("postBadge", postBadge);
-
+      if (userId !== null) {
+        formData.append("userId", userId);
+      }
       // Append each file to the FormData with the correct field name 'files'
       files.forEach((file) => {
         formData.append("files", file);

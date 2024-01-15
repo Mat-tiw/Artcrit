@@ -21,9 +21,13 @@ const SidebarVariants = cva("m-5 rounded-xl", {
 interface SidebarProps extends VariantProps<typeof SidebarVariants> {
   className?: string;
 }
-
+function handleRemove(){
+  localStorage.clear();
+  location.reload();
+}
 const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
   ({ className, type, variant }, ref) => {
+
     return (
       <>
         <div
@@ -51,12 +55,14 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             />
           </div>
           <div className="pt-16">
+            <div className="" onClick={handleRemove}>
           <SideBarLink
               icon="logout"
               variant="default"
               textSize="default"
               text="logout"
-            />
+
+            /></div>
           </div>
         </div>
       </>

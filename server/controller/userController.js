@@ -1,5 +1,6 @@
 import User from "../model/User.js";
 import bcrypt from "bcrypt";
+import jwt from 'jsonwebtoken'
 
 export const allUser = async (req, res) => {
   try {
@@ -12,7 +13,8 @@ export const allUser = async (req, res) => {
 };
 export const addUser = async (req, res) => {
   try {
-    const user_avatar = "/upload/avatar/defAvatar.jpg";
+    const user_avatar = "http://localhost:3030/static/def.jpg";
+    console.log(req.body)
     const { user, pwd, email } = req.body;
     const user_name = user;
     const user_email = email;
@@ -31,7 +33,9 @@ export const addUser = async (req, res) => {
   }
 };
 export const loginUser = async (req, res) => {
-  const { user_name, user_password } = req.body;
+  const { user, pwd} = req.body;
+  const user_name = user;
+  const user_password = pwd;
   try {
     const user = await User.findOne({ where: { user_name } });
 
@@ -51,7 +55,10 @@ export const loginUser = async (req, res) => {
     const token = jwt.sign({ userId: user.id_user }, "a-secret-key", {
       expiresIn: "1h",
     });
-    res.json({ token });
+    const userId = user.id_user;
+    const userName = user.user_name;
+    const userPic = user.user_avatar;
+    res.json({ token,userId,userName,userPic });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ error: "Internal Server Error" });

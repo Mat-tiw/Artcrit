@@ -8,6 +8,7 @@ interface PostProps {
   userName?: string;
   date?: string;
   images?: Array<{ id_image: number; image_path: string }>;
+  userPic?:string
 }
 const formattedDate = (rawDate: string | undefined) => {
   const options: Intl.DateTimeFormatOptions = {
@@ -32,6 +33,7 @@ const Posts: React.FC<PostProps> = ({
   userName,
   date,
   images,
+  userPic
 }) => {
   const renderImages = () => {
     if (!images || images.length === 0) {
@@ -117,7 +119,10 @@ const Posts: React.FC<PostProps> = ({
     <div className="m-5 flex flex-col bg-secondary rounded-xl text-white">
       <div className="p-5 flex">
         <div className="">
-          <Avatar className="" />
+          <Avatar className="" src={userPic} sx={{
+            width:64,
+            height:64
+          }} />
         </div>
         <div className="flex flex-col pl-2">
           <h1 className="font-montserrart font-bold text-1xl">{userName}</h1>
