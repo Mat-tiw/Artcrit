@@ -5,7 +5,7 @@ import Banner from "./components/Test";
 import { Sidebar } from "./components/ui/sidebar";
 import Avatar from "@mui/material/Avatar";
 import DragAndDrop from "./components/ui/dragndrop";
-import { useEffect,useState } from "react"
+import { useEffect, useState } from "react";
 import { Posts } from "./components/ui/posts";
 import axios from "axios";
 interface Image {
@@ -29,6 +29,7 @@ export default function Home() {
       try {
         const response = await axios.get("http://localhost:3030/api/post");
         setPosts(response.data);
+        console.log(response.data);
       } catch (error) {
         console.error("Error fetching posts:", error);
       }
@@ -57,15 +58,15 @@ export default function Home() {
             </div>
           </div>
           {posts.map((post) => (
-        <Posts
-          key={post.id_post}
-          title={post.post_title}
-          badge={post.post_badge}
-          userName={String(post.user_id)} // Convert user_id to string or use the actual username property if available
-          date={post.created_at}
-          images={post.ac_images}
-        />
-      ))}
+            <Posts
+              key={post.id_post}
+              title={post.post_title}
+              badge={post.post_badge}
+              userName={String(post.user_id)} // Convert user_id to string or use the actual username property if available
+              date={post.created_at}
+              images={post.ac_images}
+            />
+          ))}
         </div>
         <div className="text-white basis-[20%] ">
           <h1>right content</h1>

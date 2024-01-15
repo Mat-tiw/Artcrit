@@ -17,7 +17,6 @@ const formattedDate = (rawDate: string | undefined) => {
     hour: "numeric",
     minute: "numeric",
     second: "numeric",
-    timeZoneName: "short",
   };
 
   const dateObject = rawDate ? new Date(rawDate) : null;
@@ -38,8 +37,6 @@ const Posts: React.FC<PostProps> = ({
     if (!images || images.length === 0) {
       return null;
     }
-
-    // Determine the layout based on the number of images
     let layout;
     switch (images.length) {
       case 1:
@@ -61,39 +58,46 @@ const Posts: React.FC<PostProps> = ({
     return (
       <div className={`flex flex-wrap justify-center p-5 ${layout}`}>
         {images.map((image, index) => (
-          <Image
+
+            <Image
             key={index}
-            src={image.image_path}
-            width={350}
-            height={350}
-            sizes="(max-width: 768px) 100vw, (max-width: 1350px) 50vw, 33vw"
-            alt={`Image ${index + 1}`}
-            className={`p-0.5 rounded-${getBorderRadius(layout, index)} hover:object-scale-down ${getObjectPosition(layout, index)} object-cover`}
-          />
+              src={image.image_path}
+              width={350}
+              height={350}
+              sizes="(max-width: 768px) 100vw, (max-width: 1350px) 50vw, 33vw"
+              alt={`Image ${index + 1}`}
+              className={`p-0.5 rounded-${getBorderRadius(
+                layout,
+                index
+              )} hover:object-scale-down hover:rounded-xl ${getObjectPosition(
+                layout,
+                index
+              )} object-cover`}
+            />
+
         ))}
       </div>
     );
   };
 
   const getBorderRadius = (layout: string, index: number) => {
-    if (layout === "twoByTwo" && index === 0) return "tl-xl";
-    if (layout === "twoByTwo" && index === 1) return "tr-xl";
-    if (layout === "twoByTwo" && index === 2) return "bl-xl";
-    if (layout === "twoByTwo" && index === 3) return "br-xl";
+    if (layout === "twoByTwo" && index === 0) return "tl-xl basis-1/2";
+    if (layout === "twoByTwo" && index === 1) return "tr-xl basis-1/2";
+    if (layout === "twoByTwo" && index === 2) return "bl-xl basis-1/2";
+    if (layout === "twoByTwo" && index === 3) return "br-xl basis-1/2";
     return "xl";
   };
   const getObjectPosition = (layout: string, index: number) => {
-    if(layout === "twoColumn" && index === 0) return "object-left "
-    if(layout === "twoColumn" && index === 1) return "object-right"
+    if (layout === "twoColumn" && index === 0) return "object-left ";
+    if (layout === "twoColumn" && index === 1) return "object-right";
     if (layout === "twoByTwo" && index === 0) return "object-left ";
     if (layout === "twoByTwo" && index === 1) return "object-right ";
     if (layout === "twoByTwo" && index === 2) return "object-left ";
     if (layout === "twoByTwo" && index === 3) return "object-right ";
     if (layout === "twoRow" && index === 0) return "object-left ";
     if (layout === "twoRow" && index === 1) return "object-right ";
-    if (layout === "twoRow" && index === 2) return "object-cover";
-    return ""
-  }
+    return "";
+  };
   return (
     <div className="m-5 flex flex-col bg-secondary rounded-xl text-white">
       <div className="p-5 flex">
@@ -107,7 +111,8 @@ const Posts: React.FC<PostProps> = ({
       </div>
       <div className="pl-16">
         <p className="font-montserrart">{title}</p>
-        <span className="bg-red-600 rounded-sm">{badge}</span>
+
+        <span className="p-0.5 bg-red-600 rounded-sm">{badge}</span>
       </div>
       {renderImages()}
     </div>
