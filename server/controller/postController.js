@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import multer from "multer";
 import crypto from "crypto";
-
+import User from "../model/User.js";
 function generateRandomString(length) {
   return crypto.randomBytes(length).toString("hex");
 }
@@ -53,10 +53,16 @@ export const testFile = (req, res) => {
 export const getAllPost = async (req, res) => {
   try {
     const postsWithImages = await Post.findAll({
-      include: {
-        model: Image,
-        attributes: ['id_image', 'image_path'],
-      },
+      include: [
+        {
+          model: Image,
+          attributes: ['id_image', 'image_path'],
+        },
+        {
+          model: User,
+          attributes: ['id_user', 'user_name', 'user_email', 'user_avatar'],
+        },
+      ],
     });
 
     res.json(postsWithImages);

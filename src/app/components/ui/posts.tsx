@@ -58,12 +58,11 @@ const Posts: React.FC<PostProps> = ({
     return (
       <div className={`flex flex-wrap justify-center p-5 ${layout}`}>
         {images.map((image, index) => (
-
             <Image
             key={index}
               src={image.image_path}
-              width={350}
-              height={350}
+              width={layoutStyle(layout)}
+              height={layoutStyle(layout)}
               sizes="(max-width: 768px) 100vw, (max-width: 1350px) 50vw, 33vw"
               alt={`Image ${index + 1}`}
               className={`p-0.5 rounded-${getBorderRadius(
@@ -74,17 +73,33 @@ const Posts: React.FC<PostProps> = ({
                 index
               )} object-cover`}
             />
-
         ))}
       </div>
     );
   };
+
+  const layoutStyle = (layout:string)=>{
+    switch (layout) {
+      case "full":
+        return 600
+      case "twoColumn":
+        return 500
+      case "twoRow" :
+        return 400
+      case "twoByTwo":
+        return 350
+      default:
+        return 350
+    }
+  }
 
   const getBorderRadius = (layout: string, index: number) => {
     if (layout === "twoByTwo" && index === 0) return "tl-xl basis-1/2";
     if (layout === "twoByTwo" && index === 1) return "tr-xl basis-1/2";
     if (layout === "twoByTwo" && index === 2) return "bl-xl basis-1/2";
     if (layout === "twoByTwo" && index === 3) return "br-xl basis-1/2";
+    if(layout === "twoColumn" && index === 0) return "tl-xl rounded-bl-xl basis-1/2"
+    if(layout === "twoColumn" && index === 1) return "tr-xl rounded-br-xl basis-1/2"
     return "xl";
   };
   const getObjectPosition = (layout: string, index: number) => {

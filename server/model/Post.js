@@ -1,7 +1,5 @@
 import { Sequelize, DataTypes } from "sequelize";
 import sequelize from "../config/dbconfig.js";
-import User from "./User.js";
-import Image from "./Image.js";
 const Post = sequelize.define("ac_post", {
   id_post: {
     type: DataTypes.INTEGER,
@@ -32,8 +30,4 @@ updated_at: {
     updatedAt: "updated_at",
     id: "id_post",
 });
-  Post.belongsTo(User,{
-    foreignKey:'user_id',
-    targetKey:'id_user'
-  })
 export default Post;

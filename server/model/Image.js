@@ -1,6 +1,5 @@
 import { Sequelize, DataTypes } from "sequelize";
 import sequelize from "../config/dbconfig.js";
-import Post from "./Post.js";
 
 const Image = sequelize.define('ac_image',
 {

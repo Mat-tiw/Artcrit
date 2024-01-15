@@ -1,5 +1,6 @@
 import User from "../model/User.js";
 import bcrypt from "bcrypt";
+
 export const allUser = async (req, res) => {
   try {
     const data = await User.findAll();
@@ -11,11 +12,11 @@ export const allUser = async (req, res) => {
 };
 export const addUser = async (req, res) => {
   try {
-    const user_avatar = "/upload/avatar/defAvatar.jpg"
+    const user_avatar = "/upload/avatar/defAvatar.jpg";
     const { user, pwd, email } = req.body;
-    const user_name = user
-    const user_email = email
-    let user_password = await bcrypt.hash(pwd,13)
+    const user_name = user;
+    const user_email = email;
+    let user_password = await bcrypt.hash(pwd, 13);
     const newUser = await User.create({
       user_name,
       user_password,
@@ -24,10 +25,35 @@ export const addUser = async (req, res) => {
     });
 
     res.status(201).json(newUser);
-
-
   } catch (error) {
     console.error("Error creating user:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+export const loginUser = async (req, res) => {
+  const { user_name, user_password } = req.body;
+  try {
+    const user = await User.findOne({ where: { user_name } });
+
+    if (!user) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const passwordMatch = await bcrypt.compare(
+      user_password,
+      user.user_password
+    );
+
+    if (!passwordMatch) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const token = jwt.sign({ userId: user.id_user }, "a-secret-key", {
+      expiresIn: "1h",
+    });
+    res.json({ token });
+  } catch (error) {
+    console.error("Login error:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

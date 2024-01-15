@@ -1,5 +1,15 @@
-import TestUi from "../components/ui/testui";
+"use client"
+import { useEffect,useState } from 'react';
+import TestUi from '../components/ui/testui';
+
 const News = () => {
+  const [status, setStatus] = useState<string|null|undefined>(null);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setStatus(localStorage.getItem('token'))
+    }
+  }, [status]);
+  console.log(status)
   return (
     <>
       <TestUi
