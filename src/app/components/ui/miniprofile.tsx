@@ -101,14 +101,14 @@ const MiniProfile: React.FC = () => {
         ) : (
           <div className="">
             <h1
-              className="item-center text-primary font-montserrat font-bold p-2 mb-2 text-2xl cursor-pointer border-2 border-primary rounded-xl"
+              className="text-center item-center text-primary font-montserrat font-bold p-2 mb-2 text-2xl cursor-pointer border-2 border-primary rounded-xl"
               onClick={handleOpen}
             >
               login
             </h1>
             <i className="border-b-gray-400 w-full border-1"></i>
             <h1
-              className="text-primary font-montserrat font-bold p-2 mb-2 text-2xl cursor-pointer border-2 border-primary rounded-xl"
+              className="text-center text-primary font-montserrat font-bold p-2 mb-2 text-2xl cursor-pointer border-2 border-primary rounded-xl"
               onClick={handleOpenRegi}
             >
               register

@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-import React, { useState, useCallback, ChangeEvent, FormEvent } from "react";
+import React, { useState, useCallback, FormEvent } from "react";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 
@@ -168,9 +168,13 @@ const DragAndDrop = () => {
           </div>
           <div className="pt-5 ml-[20%] mr-[40%]">
             <button
-            disabled={postBadge === "" || postTitles === "" ? true :false}
+              disabled={postBadge === "" || postTitles === "" ? true : false}
               type="submit"
-              className={postBadge === "" || postTitles === ""? "border-red-500 border-2 rounded-lg text-red-500 w-full" : "border-primary border-2 rounded-lg text-primary w-full"}
+              className={
+                postBadge === "" || postTitles === ""
+                  ? "border-red-500 border-2 rounded-lg text-red-500 w-full"
+                  : "border-primary border-2 rounded-lg text-primary w-full"
+              }
             >
               Submit
             </button>
