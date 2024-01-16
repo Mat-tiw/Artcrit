@@ -65,7 +65,7 @@ const Posts: React.FC<PostProps> = ({
               src={image.image_path}
               width={layoutStyle(layout)}
               height={layoutStyle(layout)}
-              sizes="(max-width: 768px) 100vw, (max-width: 1350px) 50vw, 33vw"
+              sizes="(max-width: 1920px) 100vw, (max-height: 1080px) 50vw, 33vw"
               alt={`Image ${index + 1}`}
               className={`p-0.5 rounded-${getBorderRadius(
                 layout,
@@ -83,7 +83,7 @@ const Posts: React.FC<PostProps> = ({
   const layoutStyle = (layout:string)=>{
     switch (layout) {
       case "full":
-        return 600
+        return 800
       case "twoColumn":
         return 500
       case "twoRow" :
@@ -130,7 +130,7 @@ const Posts: React.FC<PostProps> = ({
         </div>
       </div>
       <div className="pl-16">
-        <p className="font-montserrart">{title}</p>
+        <p className="font-montserrart text-wrap mr-6">{title}</p>
 
         <span className="p-0.5 bg-red-600 rounded-sm">{badge}</span>
       </div>

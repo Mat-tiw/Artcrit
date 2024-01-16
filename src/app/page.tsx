@@ -69,7 +69,7 @@ export default function Home() {
               key={post.id_post}
               title={post.post_title}
               badge={post.post_badge}
-              userName={post.ac_user.user_name} // Convert user_id to string or use the actual username property if available
+              userName={post.ac_user.user_name} 
               date={post.created_at}
               images={post.ac_images}
               userPic={post.ac_user.user_avatar}
@@ -77,7 +77,7 @@ export default function Home() {
           ))}
         </div>
         <div className="text-white basis-[20%] ">
-          <h1>right content</h1>
+          <h1>placeholder</h1>
         </div>
       </div>
     </React.Fragment>
