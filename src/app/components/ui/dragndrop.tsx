@@ -3,8 +3,10 @@ import axios from "axios";
 import React, { useState, useCallback, FormEvent } from "react";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
-
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { red } from "@mui/material/colors";
 const DragAndDrop = () => {
+
   const maxFiles = 4;
   const [previews, setPreviews] = useState<(string | ArrayBuffer | null)[]>([]);
   const [files, setFiles] = useState<File[]>([]);
@@ -18,6 +20,7 @@ const DragAndDrop = () => {
   const userId = localStorage.getItem("userId");
 
   const login = localStorage.getItem("token") === null ? false : true;
+
 
   const handleOnSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,7 +46,16 @@ const DragAndDrop = () => {
       console.error("Error creating post:", error);
     }
   };
+  const handleRemoveImage = (index: number) => {
+    const updatedPreviews = [...previews];
+    const updatedFiles = [...files];
 
+    updatedPreviews.splice(index, 1);
+    updatedFiles.splice(index, 1);
+
+    setPreviews(updatedPreviews);
+    setFiles(updatedFiles);
+  };
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const previewArray: (string | ArrayBuffer | null)[] = [...previews];
@@ -75,8 +87,9 @@ const DragAndDrop = () => {
 
   return (
     <>
-      <form onSubmit={handleOnSubmit} className="flex flex-col">
+      <form onSubmit={handleOnSubmit} className="flex flex-col text-lg">
         <input
+        autoFocus
           className="pt-5 font-montserrart bg-transparent border-none focus:border-none outline-none"
           type="text"
           placeholder="Post title"
@@ -90,23 +103,14 @@ const DragAndDrop = () => {
         <p
           id="postTitle"
           className={
-            postFocused && login && postTitles === ""
+            postBadgeFocused && login && postTitles === ""
               ? "text-white border-2 border-red-700 rounded-xl p-2 mr-5"
               : "hidden"
           }
         >
           Post title cannot be empty
         </p>
-        <p
-          id="postTitle"
-          className={
-            postFocused && !login
-              ? "text-white border-2 border-red-700 rounded-xl p-2"
-              : "hidden"
-          }
-        >
-          You must be logged in to create post
-        </p>
+       
         <input
           className="font-montserrart bg-transparent border-none focus:border-none outline-none"
           type="text"
@@ -128,27 +132,19 @@ const DragAndDrop = () => {
         >
           Badge cannot be empty
         </p>
-        <p
-          id="postBadge"
-          className={
-            postBadgeFocused && !login
-              ? "text-white border-2 border-red-700 rounded-xl p-2"
-              : "hidden"
-          }
-        >
-          You must be logged in to create post
-        </p>
+       
         <div className={login ? "" : "hidden"}>
           <div {...getRootProps()}>
-            <input {...getInputProps()} />
+            <input {...getInputProps()} aria-describedby="image-input" />
             {isDragActive ? (
               <p className="border-primary border-2 border-dotted font-montserrart text-neutral-400">
                 Drop image file here
               </p>
             ) : (
               <h1 className="text-neutral-400 font-montserrart">
-                <p className={previews[0] == null ? "" : "opacity-0"}>
-                  Drop image file here
+                <p>Drop image file here</p>
+                <p className={files.length === 0 ? "text-red-300" : "opacity-0"}>
+                  *Please add at least one image*
                 </p>
               </h1>
             )}
@@ -156,24 +152,36 @@ const DragAndDrop = () => {
 
           <div className="flex flex-row">
             {previews.map((preview, index) => (
-              <div key={index} className="p-2">
+              <div key={index} className="p-2 relative">
                 <Image
                   src={preview as string}
                   alt={`Preview ${index}`}
                   width={100}
                   height={100}
                 />
+                <button
+                  onClick={() => handleRemoveImage(index)}
+                  type="button" 
+                  className="absolute top-0 right-0 p-0.5 text-white rounded-full bg-red-500"
+                >
+                  <DeleteForeverIcon sx={{color:red}}/>
+                </button>
               </div>
             ))}
           </div>
-          <div className="pt-5 ml-[20%] mr-[40%]">
+
+          <div className="flex flex-row-reverse">
             <button
-              disabled={postBadge === "" || postTitles === "" ? true : false}
+              disabled={
+                postBadge === "" || postTitles === "" || files.length === 0
+                  ? true
+                  : false
+              }
               type="submit"
               className={
-                postBadge === "" || postTitles === ""
-                  ? "border-red-500 border-2 rounded-lg text-red-500 w-full"
-                  : "border-primary border-2 rounded-lg text-primary w-full"
+                postBadge === "" || postTitles === "" || files.length === 0
+                  ? "border-gray-500 border-2 rounded-lg text-gray-500 pl-5 pr-5 ml-auto mr-8"
+                  : "border-primary border-2 rounded-lg text-primary pl-5 pr-5 ml-auto mr-8"
               }
             >
               Submit

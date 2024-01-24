@@ -3,7 +3,7 @@ import React from "react";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import axios from "axios";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -88,18 +88,22 @@ const MiniProfile: React.FC = () => {
   return (
     <>
       <div className="bg-secondary m-5 flex flex-col items-center justify-center rounded-xl sticky">
-        <Avatar
-          alt="Remy Sharp"
-          src={userPic !== null ? userPic : ""}
-          className="m-5"
-          sx={{ width: 100, height: 100 }}
-        />
+        {login ? (
+          <Avatar
+            alt="Remy Sharp"
+            src={userPic !== null ? userPic : ""}
+            className="m-5"
+            sx={{ width: 100, height: 100 }}
+          />
+        ) : (
+          ""
+        )}
         {login ? (
           <h1 className="font-montserrat font-bold pb-5 text-2xl">
             {localStorage.getItem("userName")}
           </h1>
         ) : (
-          <div className="">
+          <div className="mt-5 mb-4">
             <h1
               className="text-center item-center text-primary font-montserrat font-bold p-2 mb-2 text-2xl cursor-pointer border-2 border-primary rounded-xl"
               onClick={handleOpen}
