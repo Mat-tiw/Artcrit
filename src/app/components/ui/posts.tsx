@@ -142,9 +142,8 @@ const Posts: React.FC<PostProps> = ({
         <span className="p-0.5 bg-red-600 rounded-sm">{badge}</span>
       </div>
       {renderImages()}
-      <hr className="my-4 border-t border-gray-800" />
       <div className="flex flex-row">
-        <div className="flex flex-row m-2 p-2 rounded-sm hover:bg-gray-800 hover:cursor-pointer hover:transition-colors ease-in duration-300">
+        <div className="flex flex-row m-2 p-2 rounded-sm hover:bg-gray-400 hover:cursor-pointer hover:transition-colors ease-in duration-300">
           <FavoriteBorderIcon
             className=""
             sx={{
@@ -154,7 +153,7 @@ const Posts: React.FC<PostProps> = ({
           />
           <p className="m-2">Like</p>
         </div>
-        <div className="flex flex-row m-2 p-2 rounded-sm hover:bg-gray-800 hover:cursor-pointer hover:transition-colors ease-in duration-300">
+        <div className="flex flex-row m-2 p-2 rounded-sm hover:bg-gray-400 hover:cursor-pointer hover:transition-colors ease-in duration-300">
           <ChatBubbleOutlineIcon
             className=""
             sx={{

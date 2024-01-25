@@ -21,13 +21,13 @@ const SidebarVariants = cva("m-5 rounded-xl", {
 interface SidebarProps extends VariantProps<typeof SidebarVariants> {
   className?: string;
 }
-function handleRemove(){
+function handleRemove() {
   localStorage.clear();
   location.reload();
 }
 const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
   ({ className, type, variant }, ref) => {
-
+    const login = localStorage.getItem("token") === null ? false : true;
     return (
       <>
         <div
@@ -35,12 +35,16 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
           className={cn(SidebarVariants({ className, type, variant }))}
         >
           <div className="">
-            <SideBarLink
-              icon="user"
-              variant="default"
-              textSize="default"
-              text="profile"
-            />
+            {login ? (
+              <SideBarLink
+                icon="user"
+                variant="default"
+                textSize="default"
+                text="profile"
+              />
+            ) : (
+              ""
+            )}
             <SideBarLink
               icon="feed"
               variant="default"
@@ -54,16 +58,20 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
               text="placeholder"
             />
           </div>
-          <div className="pt-16">
-            <div className="" onClick={handleRemove}>
-          <SideBarLink
-              icon="logout"
-              variant="default"
-              textSize="default"
-              text="logout"
-
-            /></div>
-          </div>
+          {login ? (
+            <div className="pt-16">
+              <div className="" onClick={handleRemove}>
+                <SideBarLink
+                  icon="logout"
+                  variant="default"
+                  textSize="default"
+                  text="logout"
+                />
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
         </div>
       </>
     );

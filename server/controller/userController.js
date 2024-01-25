@@ -14,7 +14,6 @@ export const allUser = async (req, res) => {
 export const addUser = async (req, res) => {
   try {
     const user_avatar = "http://localhost:3030/static/def.jpg";
-    console.log(req.body)
     const { user, pwd, email } = req.body;
     const user_name = user;
     const user_email = email;
