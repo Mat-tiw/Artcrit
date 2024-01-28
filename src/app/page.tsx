@@ -31,12 +31,15 @@ interface User {
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
   const userPic = localStorage.getItem("userPic");
+  const [isLoading , setIsLoading]=useState<boolean>(false)
   useEffect(() => {
     const fetchPosts = async () => {
       try {
+        const delay = (ms: number | undefined) => new Promise((resolve) => setTimeout(resolve, ms));
+        await delay(1500);
         const response = await axios.get("http://localhost:3030/api/post");
         setPosts(response.data);
-        console.log(response.data);
+        setIsLoading(true)
       } catch (error) {
         console.error("Error fetching posts:", error);
       }
@@ -45,10 +48,14 @@ export default function Home() {
     fetchPosts();
   }, []);
   const login = localStorage.getItem("token") === null ? false : true;
+  function loadBgColor(isLoading:boolean){
+    if(!isLoading)return "h-screen"
+    return ""
+  }
   return (
     <React.Fragment>
       <Banner />
-      <div className="bg-primaryBg flex flex-row">
+      <div className={`bg-primaryBg flex flex-row ${loadBgColor(isLoading)}`}>
         <div className="text-white basis-[20%] flex flex-col">
           <MiniProfile />
           <Sidebar variant="default" />
@@ -79,17 +86,29 @@ export default function Home() {
               </div>
             </div>
           )}
-          {posts.map((post) => (
+          {isLoading ? (
+            posts.map((post) => (
+              <Posts
+                key={post.id_post}
+                title={post.post_title}
+                badge={post.post_badge}
+                userName={post.ac_user.user_name}
+                date={post.created_at}
+                images={post.ac_images}
+                userPic={post.ac_user.user_avatar}
+              />
+            ))
+          ) : (
+            <div className="animate-pulse p-2">
             <Posts
-              key={post.id_post}
-              title={post.post_title}
-              badge={post.post_badge}
-              userName={post.ac_user.user_name}
-              date={post.created_at}
-              images={post.ac_images}
-              userPic={post.ac_user.user_avatar}
-            />
-          ))}
+            title="loading..."
+            badge="loading..."
+            userName="loading..."
+            images={[]}
+            userPic=""
+          />
+          </div>
+          )}
         </div>
         <div className="text-white basis-[20%] ">
           <h1>placeholder</h1>

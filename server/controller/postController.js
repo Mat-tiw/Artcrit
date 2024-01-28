@@ -71,4 +71,30 @@ export const getAllPost = async (req, res) => {
   }
 };
 
+export const getPost = async (req, res) => {
+  const id = req.params.id
+  console.log(id)
+  try {
+    const postWithImagesAndUser = await Post.findOne({
+      where: { id_post: id },
+      include: [
+        {
+          model: Image,
+          attributes: ['id_image', 'image_path'],
+        },
+        {
+          model: User,
+          attributes: ['id_user', 'user_name', 'user_email', 'user_avatar'],
+        },
+      ],
+    });
+    if(!postWithImagesAndUser){
+      return res.status(401).json({ error: "Post not found" });
+    }
+    res.json(postWithImagesAndUser);
+  } catch (error) {
+    res.message(error.message)
+  }
+}
+
 export const uploadPostImage = upload.array("files", 4);
