@@ -35,8 +35,6 @@ export default function Home() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const delay = (ms: number | undefined) => new Promise((resolve) => setTimeout(resolve, ms));
-        await delay(1500);
         const response = await axios.get("http://localhost:3030/api/post");
         setPosts(response.data);
         setIsLoading(true)
@@ -89,7 +87,9 @@ export default function Home() {
           {isLoading ? (
             posts.map((post) => (
               <Posts
+              showComment={false}
                 key={post.id_post}
+                userId={post.id_post}
                 title={post.post_title}
                 badge={post.post_badge}
                 userName={post.ac_user.user_name}
@@ -101,6 +101,7 @@ export default function Home() {
           ) : (
             <div className="animate-pulse p-2">
             <Posts
+            showComment={false}
             title="loading..."
             badge="loading..."
             userName="loading..."

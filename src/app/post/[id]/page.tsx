@@ -31,8 +31,6 @@ export default function Pages({ params }: { params: { id: number } }) {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const delay = (ms: number | undefined) => new Promise((resolve) => setTimeout(resolve, ms));
-        await delay(1500);
         const response = await axios.get(
           `http://localhost:3030/api/post/get/${params.id}`
         );
@@ -56,6 +54,7 @@ export default function Pages({ params }: { params: { id: number } }) {
         <div className="text-white basis-[60%]">
         {post ? (
           <Posts
+            showComment={true}
             title={post.post_title}
             badge={post.post_badge}
             userName={post.ac_user.user_name}
@@ -66,6 +65,7 @@ export default function Pages({ params }: { params: { id: number } }) {
         ) : (
           <div className="animate-pulse p-2">
             <Posts
+            showComment={false}
             title="loading..."
             badge="loading..."
             userName="loading..."

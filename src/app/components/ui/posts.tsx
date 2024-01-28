@@ -1,8 +1,13 @@
+"use client";
 import React from "react";
 import Avatar from "@mui/material/Avatar";
 import Image from "next/image";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import { useRouter } from "next/navigation";
+import { Comments } from "./comments";
+import { CommentsInput } from "./commentsInput";
+
 interface PostProps {
   title?: string;
   badge?: string;
@@ -10,7 +15,10 @@ interface PostProps {
   date?: string;
   images?: Array<{ id_image: number; image_path: string }>;
   userPic?: string;
+  userId?: number;
+  showComment: boolean;
 }
+
 const formattedDate = (rawDate: string | undefined) => {
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
@@ -35,7 +43,11 @@ const Posts: React.FC<PostProps> = ({
   date,
   images,
   userPic,
+  userId,
+  showComment,
 }) => {
+  const router = useRouter();
+
   const renderImages = () => {
     if (!images || images.length === 0) {
       return null;
@@ -107,6 +119,7 @@ const Posts: React.FC<PostProps> = ({
       return "tr-xl rounded-br-xl basis-1/2";
     return "xl";
   };
+
   const getObjectPosition = (layout: string, index: number) => {
     if (layout === "twoColumn" && index === 0) return "object-left ";
     if (layout === "twoColumn" && index === 1) return "object-right";
@@ -118,8 +131,22 @@ const Posts: React.FC<PostProps> = ({
     if (layout === "twoRow" && index === 1) return "object-right ";
     return "";
   };
+
+  const handleClick = (id: number | null | undefined) => {
+    if (id === null || id === undefined) return;
+
+    if (router && router.push) {
+      router.push("/post/" + id);
+    } else {
+      console.error("Router object is not ready.");
+    }
+  };
+
   return (
-    <div className="m-5 flex flex-col bg-secondary rounded-xl text-white">
+    <div
+      className="m-5 flex flex-col bg-secondary rounded-xl text-white"
+      onClick={() => handleClick(userId)}
+    >
       <div className="p-5 flex">
         <div className="">
           <Avatar
@@ -164,6 +191,21 @@ const Posts: React.FC<PostProps> = ({
           <p className="m-2 ">Comments</p>
         </div>
       </div>
+      {showComment ? (
+        <>
+          <div className="flex flex-col p-5">
+            <CommentsInput />
+            <Comments
+              userName="Tester1"
+              userPic="http://localhost:3030/static/3d99072c88image-5.jpg"
+              commentPoint={24}
+              commentContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+            />
+          </div>
+        </>
+      ) : (
+        ""
+      )}
     </div>
   );
 };

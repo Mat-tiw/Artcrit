@@ -5,7 +5,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import FeedIcon from "@mui/icons-material/Feed";
 import LogoutIcon from "@mui/icons-material/Logout";
 import FmdBadIcon from "@mui/icons-material/FmdBad";
-
+import Link from "next/link";
 const iconType = {
   user: <PersonIcon />,
   feed: <FeedIcon />,
@@ -48,14 +48,17 @@ const SideBarLink = React.forwardRef<HTMLDivElement, SideBarLinkProps>(
   ({ className, text, textSize, icon, href, variant, ...props }, ref) => {
     return (
       <>
-        <div
-          className={cn(SideBarLinkVariants({ className, variant }))}
-          ref={ref}
-          {...props}
-        >
-          <div className="">{iconType[icon]}</div>
-          <h1 className="pl-5">{text}</h1>
-        </div>
+        {href ? ( 
+            <a href={href} className={cn(SideBarLinkVariants({ className, variant }))}{...props}>
+              <div className="">{iconType[icon]}</div>
+              <h1 className="pl-5">{text}</h1>
+            </a>
+        ) : (
+          <div className={cn(SideBarLinkVariants({ className, variant }))} ref={ref} {...props}>
+            <div className="">{iconType[icon]}</div>
+            <h1 className="pl-5">{text}</h1>
+          </div>
+        )}
       </>
     );
   }

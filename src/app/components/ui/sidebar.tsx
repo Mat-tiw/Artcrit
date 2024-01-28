@@ -41,6 +41,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                 variant="default"
                 textSize="default"
                 text="profile"
+                href=""
               />
             ) : (
               ""
@@ -50,6 +51,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
               variant="default"
               textSize="default"
               text="feed"
+              href="/"
             />
             <SideBarLink
               icon="placeholder"
