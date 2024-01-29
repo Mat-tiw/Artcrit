@@ -76,8 +76,8 @@ const Posts: React.FC<PostProps> = ({
           <Image
             key={index}
             src={image.image_path}
-            width={layoutStyle(layout)}
-            height={layoutStyle(layout)}
+            width={getLayoutImage(layout, index)}
+            height={getLayoutImage(layout, index)}
             sizes="(max-width: 1920px) 100vw, (max-height: 1080px) 50vw, 33vw"
             alt={`Image ${index + 1}`}
             className={`p-0.5 rounded-${getBorderRadius(
@@ -93,43 +93,45 @@ const Posts: React.FC<PostProps> = ({
     );
   };
 
-  const layoutStyle = (layout: string) => {
-    switch (layout) {
-      case "full":
-        return 800;
-      case "twoColumn":
-        return 500;
-      case "twoRow":
-        return 400;
-      case "twoByTwo":
-        return 350;
-      default:
-        return 350;
-    }
+  const getLayoutImage = (layout: string, index: number) => {
+    const layoutImageMap: Record<string, Record<number, number>> = {
+      full: { 0: 800 },
+      twoColumn: { 0: 500, 1: 500 },
+      twoRow: { 0: 500, 1: 500, 2: 800 },
+      twoByTwo: { 0: 350, 1: 350, 2: 350, 3: 350 },
+    };
+    return layoutImageMap[layout]?.[index] || 350;
   };
 
   const getBorderRadius = (layout: string, index: number) => {
-    if (layout === "twoByTwo" && index === 0) return "tl-xl basis-1/2";
-    if (layout === "twoByTwo" && index === 1) return "tr-xl basis-1/2";
-    if (layout === "twoByTwo" && index === 2) return "bl-xl basis-1/2";
-    if (layout === "twoByTwo" && index === 3) return "br-xl basis-1/2";
-    if (layout === "twoColumn" && index === 0)
-      return "tl-xl rounded-bl-xl basis-1/2";
-    if (layout === "twoColumn" && index === 1)
-      return "tr-xl rounded-br-xl basis-1/2";
-    return "xl";
+    const borderRadiusMap: Record<string, Record<number, string>> = {
+      twoByTwo: {
+        0: "tl-xl basis-1/2",
+        1: "tr-xl basis-1/2",
+        2: "bl-xl basis-1/2",
+        3: "br-xl basis-1/2",
+      },
+      twoColumn: {
+        0: "tl-xl rounded-bl-xl basis-1/2",
+        1: "tr-xl rounded-br-xl basis-1/2",
+      },
+    };
+
+    return borderRadiusMap[layout]?.[index] || "xl";
   };
 
   const getObjectPosition = (layout: string, index: number) => {
-    if (layout === "twoColumn" && index === 0) return "object-left ";
-    if (layout === "twoColumn" && index === 1) return "object-right";
-    if (layout === "twoByTwo" && index === 0) return "object-left ";
-    if (layout === "twoByTwo" && index === 1) return "object-right ";
-    if (layout === "twoByTwo" && index === 2) return "object-left ";
-    if (layout === "twoByTwo" && index === 3) return "object-right ";
-    if (layout === "twoRow" && index === 0) return "object-left ";
-    if (layout === "twoRow" && index === 1) return "object-right ";
-    return "";
+    const objectPositionMap: Record<string, Record<number, string>> = {
+      twoColumn: { 0: "object-left", 1: "object-right" },
+      twoByTwo: {
+        0: "object-left",
+        1: "object-right",
+        2: "object-left",
+        3: "object-right",
+      },
+      twoRow: { 0: "object-left", 1: "object-right" },
+    };
+    return objectPositionMap[layout]?.[index] || "";
   };
 
   const handleClick = (id: number | null | undefined) => {
@@ -194,13 +196,23 @@ const Posts: React.FC<PostProps> = ({
       {showComment ? (
         <>
           <div className="flex flex-col p-5">
-            <CommentsInput />
+            <div className="">
+              <CommentsInput />
+            </div>
             <Comments
               userName="Tester1"
               userPic="http://localhost:3030/static/3d99072c88image-5.jpg"
               commentPoint={24}
               commentContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
             />
+            <div className="ml-10">
+              <Comments
+                userName="Tester1"
+                userPic="http://localhost:3030/static/3d99072c88image-5.jpg"
+                commentPoint={24}
+                commentContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+              />
+            </div>
           </div>
         </>
       ) : (

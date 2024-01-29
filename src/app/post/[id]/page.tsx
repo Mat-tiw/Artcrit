@@ -46,7 +46,7 @@ export default function Pages({ params }: { params: { id: number } }) {
 
   return (
     <>
-      <div className="bg-primaryBg flex flex-row h-screen">
+      <div className="bg-primaryBg flex flex-row min-h-screen">
       <div className="text-white basis-[20%] flex flex-col">
           <MiniProfile />
           <Sidebar variant="default" />

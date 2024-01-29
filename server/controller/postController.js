@@ -5,9 +5,11 @@ import { dirname } from "path";
 import multer from "multer";
 import crypto from "crypto";
 import User from "../model/User.js";
+
 function generateRandomString(length) {
   return crypto.randomBytes(length).toString("hex");
 }
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const storage = multer.diskStorage({
