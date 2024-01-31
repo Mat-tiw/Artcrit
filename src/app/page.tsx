@@ -112,7 +112,7 @@ export default function Home() {
           )}
         </div>
         <div className="text-white basis-[20%] ">
-          <h1>placeholder</h1>
+          <h1>{""}</h1>
         </div>
       </div>
     </React.Fragment>

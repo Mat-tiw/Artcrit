@@ -5,6 +5,7 @@ import { dirname } from "path";
 import multer from "multer";
 import crypto from "crypto";
 import User from "../model/User.js";
+import path from "path";
 
 function generateRandomString(length) {
   return crypto.randomBytes(length).toString("hex");
@@ -12,9 +13,11 @@ function generateRandomString(length) {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+const uploadPath = path.join(__dirname, 'public');
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadPath = "D:/Desktop/artcrit-alpha/artcrit-early/server/public";
     cb(null, uploadPath);
   },
   filename: function (req, file, cb) {
@@ -26,20 +29,23 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 export const createPost = async (req, res) => {
-  const { postTitles, postBadge,userId } = req.body;
+  const { postTitle, postBadge, userId } = req.body;
   const files = req.files;
+
   try {
     const post = await Post.create({
-      post_title: postTitles,
+      post_title: postTitle,
       post_badge: postBadge,
       user_id: userId,
     });
+
     const imagePromises = files.map(async (image) => {
       return await Image.create({
         image_path: `http://localhost:3030/static/${image.filename}`,
         post_id: post.id_post,
       });
     });
+
     await Promise.all(imagePromises);
     res.status(200).json({ message: "Post created successfully" });
   } catch (error) {
@@ -47,10 +53,12 @@ export const createPost = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 export const testFile = (req, res) => {
   const files = req.body.files;
   console.log(files);
 };
+
 export const getAllPost = async (req, res) => {
   try {
     const postsWithImages = await Post.findAll({
@@ -74,8 +82,8 @@ export const getAllPost = async (req, res) => {
 };
 
 export const getPost = async (req, res) => {
-  const id = req.params.id
-  console.log(id)
+  const id = req.params.id;
+
   try {
     const postWithImagesAndUser = await Post.findOne({
       where: { id_post: id },
@@ -90,13 +98,16 @@ export const getPost = async (req, res) => {
         },
       ],
     });
-    if(!postWithImagesAndUser){
-      return res.status(401).json({ error: "Post not found" });
+
+    if (!postWithImagesAndUser) {
+      return res.status(404).json({ error: "Post not found" });
     }
+
     res.json(postWithImagesAndUser);
   } catch (error) {
-    res.message(error.message)
+    console.error('Error fetching post:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
 
 export const uploadPostImage = upload.array("files", 4);

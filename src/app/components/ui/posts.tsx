@@ -204,13 +204,16 @@ const Posts: React.FC<PostProps> = ({
               userPic="http://localhost:3030/static/3d99072c88image-5.jpg"
               commentPoint={24}
               commentContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+              testImage={true}
+              imgPath="http://localhost:3030/static/cmpreview.png"
             />
             <div className="ml-10">
               <Comments
-                userName="Tester1"
-                userPic="http://localhost:3030/static/3d99072c88image-5.jpg"
-                commentPoint={24}
+                userName="Tester2"
+                userPic="http://localhost:3030/static/def.jpg"
+                commentPoint={2}
                 commentContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+                testImage={false}
               />
             </div>
           </div>

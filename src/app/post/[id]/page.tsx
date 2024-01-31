@@ -76,7 +76,7 @@ export default function Pages({ params }: { params: { id: number } }) {
         )}
         </div>
         <div className="text-white basis-[20%] ">
-          <h1>placeholder</h1>
+          <h1>{""}</h1>
         </div>
       </div>
     </>
