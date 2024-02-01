@@ -81,8 +81,7 @@ const DragAndDrop = () => {
   });
 
   return (
-    <>
-      <form onSubmit={handleOnSubmit} className="flex flex-col text-lg">
+    <form onSubmit={handleOnSubmit} className="flex flex-col text-lg">
         <input
           autoFocus
           className="pt-5 font-montserrart bg-transparent border-none focus:border-none outline-none"
@@ -186,7 +185,6 @@ const DragAndDrop = () => {
           </div>
         </div>
       </form>
-    </>
   );
 };
 
