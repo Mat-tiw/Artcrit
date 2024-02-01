@@ -1,8 +1,7 @@
 import React from 'react'
 import { Avatar } from '@mui/material'
+import {login,userPic} from '../../../api/api.js'
 export const CommentsInput = () => {
-    const login = localStorage.getItem("token") === null ? false : true;
-    const userPic = localStorage.getItem("userPic");
   return (
     <>
     {login ? (  <div className='flex flex-row pb-5'>

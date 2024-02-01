@@ -1,13 +1,14 @@
 "use client";
 import { MiniProfile } from "./components/ui/miniprofile";
 import * as React from "react";
-import Banner from "./components/Test";
+import Banner from "./components/ui/header";
 import { Sidebar } from "./components/ui/sidebar";
 import Avatar from "@mui/material/Avatar";
 import DragAndDrop from "./components/ui/dragndrop";
 import { useEffect, useState } from "react";
 import { Posts } from "./components/ui/posts";
 import axios from "axios";
+import { login, userPic, defaultBackend } from "../api/api.js";
 interface Image {
   id_image: number;
   image_path: string;
@@ -30,12 +31,11 @@ interface User {
 }
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
-  const userPic = localStorage.getItem("userPic");
   const [isLoading , setIsLoading]=useState<boolean>(false)
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("http://localhost:3030/api/post");
+        const response = await axios.get(`${defaultBackend}post`);
         setPosts(response.data);
         setIsLoading(true)
       } catch (error) {
@@ -45,7 +45,6 @@ export default function Home() {
 
     fetchPosts();
   }, []);
-  const login = localStorage.getItem("token") === null ? false : true;
   function loadBgColor(isLoading:boolean){
     if(!isLoading)return "h-screen"
     return ""

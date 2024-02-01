@@ -4,6 +4,7 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { login, userPic, defaultBackend } from "../../../api/api.js";
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
@@ -50,11 +51,9 @@ const MiniProfile: React.FC = () => {
     setValidMatch(pwd === matchPwd);
   }, [pwd, matchPwd]);
 
-  const userPic = localStorage.getItem("userPic");
-
   const handleSubmit = async () => {
     try {
-      const res = await axios.post("http://localhost:3030/api/user/login", {
+      const res = await axios.post(`${defaultBackend}user/login`, {
         user: user,
         pwd: pwd,
       });
@@ -72,7 +71,7 @@ const MiniProfile: React.FC = () => {
   };
   const handleSubmitCreate = async () => {
     try {
-      const res = await axios.post("http://localhost:3030/api/user/create", {
+      const res = await axios.post("user/create", {
         user: user,
         pwd: pwd,
       });
@@ -82,9 +81,6 @@ const MiniProfile: React.FC = () => {
       console.error("Error submitting data:", error);
     }
   };
-  const login = localStorage.getItem("token") === null ? false : true;
-
-  console.log(login);
   return (
     <>
       <div className="bg-secondary m-5 flex flex-col items-center justify-center rounded-xl sticky">

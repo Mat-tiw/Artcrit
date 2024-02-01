@@ -3,10 +3,10 @@ import axios from "axios";
 import React, { useState, useCallback, FormEvent } from "react";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { red } from "@mui/material/colors";
+import { login, defaultBackend, userId } from "../../../api/api.js";
 const DragAndDrop = () => {
-
   const maxFiles = 4;
   const [previews, setPreviews] = useState<(string | ArrayBuffer | null)[]>([]);
   const [files, setFiles] = useState<File[]>([]);
@@ -16,11 +16,6 @@ const DragAndDrop = () => {
 
   const [postBadge, setPostBadge] = useState<string>("");
   const [postBadgeFocused, setPostBadgeFocused] = useState<boolean>(false);
-
-  const userId = localStorage.getItem("userId");
-
-  const login = localStorage.getItem("token") === null ? false : true;
-
 
   const handleOnSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,7 +32,7 @@ const DragAndDrop = () => {
       });
 
       const response = await axios.post(
-        "http://localhost:3030/api/post/create",
+        `${defaultBackend}post/create`,
         formData
       );
       console.log(response);
@@ -89,7 +84,7 @@ const DragAndDrop = () => {
     <>
       <form onSubmit={handleOnSubmit} className="flex flex-col text-lg">
         <input
-        autoFocus
+          autoFocus
           className="pt-5 font-montserrart bg-transparent border-none focus:border-none outline-none"
           type="text"
           placeholder="Post title"
@@ -110,7 +105,7 @@ const DragAndDrop = () => {
         >
           Post title cannot be empty
         </p>
-       
+
         <input
           className="font-montserrart bg-transparent border-none focus:border-none outline-none"
           type="text"
@@ -132,7 +127,7 @@ const DragAndDrop = () => {
         >
           Badge cannot be empty
         </p>
-       
+
         <div className={login ? "" : "hidden"}>
           <div {...getRootProps()}>
             <input {...getInputProps()} aria-describedby="image-input" />
@@ -143,7 +138,9 @@ const DragAndDrop = () => {
             ) : (
               <h1 className="text-neutral-400 font-montserrart">
                 <p>Drop image file here</p>
-                <p className={files.length === 0 ? "text-red-300" : "opacity-0"}>
+                <p
+                  className={files.length === 0 ? "text-red-300" : "opacity-0"}
+                >
                   *Please add at least one image*
                 </p>
               </h1>
@@ -161,10 +158,10 @@ const DragAndDrop = () => {
                 />
                 <button
                   onClick={() => handleRemoveImage(index)}
-                  type="button" 
+                  type="button"
                   className="absolute top-0 right-0 p-0.5 text-white rounded-full bg-red-500"
                 >
-                  <DeleteForeverIcon sx={{color:red}}/>
+                  <DeleteForeverIcon sx={{ color: red }} />
                 </button>
               </div>
             ))}
