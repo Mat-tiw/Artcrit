@@ -6,19 +6,23 @@ User.hasMany(Post,{
   foreignKey:'user_id',
   sourceKey:'id_user'
 })
-
+User.hasMany(Image,{
+  foreignKey:'user_id',
+  sourceKey:'id_user'
+})
 Post.belongsTo(User,{
   foreignKey:'user_id',
   targetKey:'id_user'
 })
-
 Post.hasMany(Image, {
   foreignKey: 'post_id',
   sourceKey: 'id_post'
 });
-
-
 Image.belongsTo(Post, {
   foreignKey: 'post_id',
   targetKey: 'id_post'
 });
+Image.belongsTo(User,{
+  foreignKey:'user_id',
+  targetKey: 'id_user'
+})

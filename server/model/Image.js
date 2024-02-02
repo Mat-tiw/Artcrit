@@ -13,10 +13,6 @@ const Image = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    user_email: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: true,

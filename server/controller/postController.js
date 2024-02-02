@@ -24,7 +24,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 export const createPost = async (req, res) => {
-  const { postTitles, postBadge,userId } = req.body;
+  const { postTitles, postBadge, userId } = req.body;
   const files = req.files;
   try {
     const post = await Post.create({
@@ -36,6 +36,7 @@ export const createPost = async (req, res) => {
       return await Image.create({
         image_path: `http://localhost:3030/static/${image.filename}`,
         post_id: post.id_post,
+        user_id:userId
       });
     });
     await Promise.all(imagePromises);
@@ -45,6 +46,7 @@ export const createPost = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 export const testFile = (req, res) => {
   const files = req.body.files;
   console.log(files);
@@ -55,46 +57,64 @@ export const getAllPost = async (req, res) => {
       include: [
         {
           model: Image,
-          attributes: ['id_image', 'image_path'],
+          attributes: ["id_image", "image_path"],
         },
         {
           model: User,
-          attributes: ['id_user', 'user_name', 'user_email', 'user_avatar'],
+          attributes: ["id_user", "user_name", "user_email", "user_avatar"],
         },
       ],
     });
 
     res.json(postsWithImages);
   } catch (error) {
-    console.error('Error fetching posts and images:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error("Error fetching posts and images:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
 export const getPost = async (req, res) => {
-  const id = req.params.id
-  console.log(id)
+  const id = req.params.id;
   try {
     const postWithImagesAndUser = await Post.findOne({
       where: { id_post: id },
       include: [
         {
           model: Image,
-          attributes: ['id_image', 'image_path'],
+          attributes: ["id_image", "image_path"],
         },
         {
           model: User,
-          attributes: ['id_user', 'user_name', 'user_email', 'user_avatar'],
+          attributes: ["id_user", "user_name", "user_email", "user_avatar"],
         },
       ],
     });
-    if(!postWithImagesAndUser){
-      return res.status(401).json({ error: "Post not found" });
+    if (!postWithImagesAndUser) {
+      return res.status(401).json({ error:true,message:"no post found" });
     }
     res.json(postWithImagesAndUser);
   } catch (error) {
-    res.message(error.message)
+    res.message(error.message);
   }
-}
-
+};
+export const getUserPost = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const allUserPost = await Post.findAll({
+      where: { user_id: id },
+      include: [
+        {
+          model: Image,
+          attributes: ["id_image", "image_path"],
+        },
+        {
+          model: User,
+          attributes: ["id_user", "user_name", "user_email", "user_avatar"],
+        },
+      ],
+    });
+    if(!allUserPost) return res.status(401).json({ error:true,message:"no post found" })
+    res.json(allUserPost);
+  } catch (error) {}
+};
 export const uploadPostImage = upload.array("files", 4);

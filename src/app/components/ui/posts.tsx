@@ -194,8 +194,7 @@ const Posts: React.FC<PostProps> = ({
         </div>
       </div>
       {showComment ? (
-        <>
-          <div className="flex flex-col p-5">
+        <div className="flex flex-col p-5">
             <div className="">
               <CommentsInput />
             </div>
@@ -217,7 +216,6 @@ const Posts: React.FC<PostProps> = ({
               />
             </div>
           </div>
-        </>
       ) : (
         ""
       )}

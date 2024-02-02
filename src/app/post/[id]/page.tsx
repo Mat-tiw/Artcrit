@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { MiniProfile } from "@/app/components/ui/miniprofile";
 import { Sidebar } from "@/app/components/ui/sidebar";
+import { defaultBackend } from '@/api/api.js';
 interface Image {
   id_image: number;
   image_path: string;
@@ -32,7 +33,7 @@ export default function Pages({ params }: Readonly<{ params: { id: number } }>) 
     const fetchPost = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3030/api/post/get/${params.id}`
+          `${defaultBackend}post/get/${params.id}`
         );
         setPost(response.data);
         console.log(response.data);
