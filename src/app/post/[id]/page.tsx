@@ -26,7 +26,7 @@ interface User {
   id_user: number;
 }
 
-export default function Pages({ params }: { params: { id: number } }) {
+export default function Pages({ params }: Readonly<{ params: { id: number } }>) {
   const [post, setPost] = useState<Post | null>(null);
   useEffect(() => {
     const fetchPost = async () => {
@@ -45,8 +45,7 @@ export default function Pages({ params }: { params: { id: number } }) {
   }, [params.id]);
 
   return (
-    <>
-      <div className="bg-primaryBg flex flex-row min-h-screen">
+    <div className="bg-primaryBg flex flex-row min-h-screen">
       <div className="text-white basis-[20%] flex flex-col">
           <MiniProfile />
           <Sidebar variant="default" />
@@ -79,6 +78,5 @@ export default function Pages({ params }: { params: { id: number } }) {
           <h1>{""}</h1>
         </div>
       </div>
-    </>
   );
 }

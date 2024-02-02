@@ -11,6 +11,20 @@ export const allUser = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+export const findUser = async (req, res) =>{
+  try {
+    const id = req.params.id;
+    const data = await User.findOne({
+      where :{
+        id_user:id
+      }
+    })
+    res.json(data);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
 export const addUser = async (req, res) => {
   try {
     const user_avatar = "http://localhost:3030/static/def.jpg";

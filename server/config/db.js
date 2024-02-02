@@ -5,4 +5,5 @@ const db  = {
     DB:"artcrit_alpha",
     dialect:"mysql"
 }
+
 export default db

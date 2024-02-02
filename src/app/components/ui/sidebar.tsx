@@ -2,7 +2,7 @@ import * as React from "react";
 import { SideBarLink } from "./sidebarlink";
 import { cn } from "@/app/lib/utils";
 import { cva, VariantProps } from "class-variance-authority";
-
+import { login,userId } from "@/api/api.js"
 const SidebarVariants = cva("m-5 rounded-xl", {
   variants: {
     variant: {
@@ -27,10 +27,8 @@ function handleRemove() {
 }
 const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
   ({ className, type, variant }, ref) => {
-    const login = localStorage.getItem("token") === null ? false : true;
     return (
-      <>
-        <div
+      <div
           ref={ref}
           className={cn(SidebarVariants({ className, type, variant }))}
         >
@@ -41,7 +39,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                 variant="default"
                 textSize="default"
                 text="profile"
-                href=""
+                href={`/user/${userId}`}
               />
             ) : (
               ""
@@ -75,7 +73,6 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             ""
           )}
         </div>
-      </>
     );
   }
 );

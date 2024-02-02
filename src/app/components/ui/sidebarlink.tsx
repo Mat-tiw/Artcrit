@@ -1,3 +1,4 @@
+"use client"
 import * as React from "react";
 import { cn } from "@/app/lib/utils";
 import { cva, VariantProps } from "class-variance-authority";
@@ -5,7 +6,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import FeedIcon from "@mui/icons-material/Feed";
 import LogoutIcon from "@mui/icons-material/Logout";
 import FmdBadIcon from "@mui/icons-material/FmdBad";
-import Link from "next/link";
+
 const iconType = {
   user: <PersonIcon />,
   feed: <FeedIcon />,

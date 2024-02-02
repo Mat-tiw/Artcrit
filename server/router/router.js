@@ -1,5 +1,5 @@
 import express from "express";
-import { allUser,addUser,loginUser } from "../controller/userController.js";
+import { allUser,addUser,loginUser,findUser } from "../controller/userController.js";
 import {testFile,uploadPostImage,createPost,getAllPost,getPost} from "../controller/postController.js";
 
 const router = express.Router();
@@ -11,4 +11,5 @@ router.post('/post/create',uploadPostImage,createPost)
 router.post('/post/test',testFile)
 router.get('/post',getAllPost)
 router.get('/post/get/:id', getPost);
+router.get('/user/:id', findUser)
 export default router;

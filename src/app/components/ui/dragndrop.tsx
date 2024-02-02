@@ -12,7 +12,6 @@ const DragAndDrop = () => {
   const [files, setFiles] = useState<File[]>([]);
 
   const [postTitles, setPostTitles] = useState<string>("");
-  const [postFocused, setPostFocused] = useState<boolean>(false);
 
   const [postBadge, setPostBadge] = useState<string>("");
   const [postBadgeFocused, setPostBadgeFocused] = useState<boolean>(false);
@@ -91,8 +90,6 @@ const DragAndDrop = () => {
           aria-describedby="postTitle"
           value={postTitles}
           onChange={(e) => setPostTitles(e.target.value)}
-          onFocus={() => setPostFocused(true)}
-          onBlur={() => setPostFocused(false)}
         />
         <p
           id="postTitle"
@@ -169,9 +166,7 @@ const DragAndDrop = () => {
           <div className="flex flex-row-reverse">
             <button
               disabled={
-                postBadge === "" || postTitles === "" || files.length === 0
-                  ? true
-                  : false
+                !!(postBadge === "" || postTitles === "" || files.length === 0)
               }
               type="submit"
               className={
