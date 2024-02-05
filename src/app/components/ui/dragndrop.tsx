@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-import React, { useState, useCallback, FormEvent } from "react";
+import React, { useState, useCallback, FormEvent,ChangeEvent, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -12,6 +12,16 @@ const DragAndDrop = () => {
   const [files, setFiles] = useState<File[]>([]);
 
   const [postTitles, setPostTitles] = useState<string>("");
+  const postTitleRef = useRef<HTMLTextAreaElement|null>(null);
+  const handlePostTitleChange = (e: ChangeEvent<HTMLTextAreaElement>) =>{
+    setPostTitles(e.target.value);
+    const postTitle = postTitleRef.current;
+    if(postTitle){
+      postTitle.style.height = "auto";
+      postTitle.style.height = `${postTitle.scrollHeight}px`;
+    }
+  }
+
 
   const [postBadge, setPostBadge] = useState<string>("");
   const [postBadgeFocused, setPostBadgeFocused] = useState<boolean>(false);
@@ -81,15 +91,19 @@ const DragAndDrop = () => {
 
   return (
     <form onSubmit={handleOnSubmit} className="flex flex-col text-lg">
-        <input
-          autoFocus
-          className="pt-5 font-montserrart bg-transparent border-none focus:border-none outline-none"
-          type="text"
-          placeholder="Post title"
-          autoComplete="off"
-          aria-describedby="postTitle"
-          value={postTitles}
-          onChange={(e) => setPostTitles(e.target.value)}
+        <textarea
+        autoFocus={true}
+        ref={postTitleRef}
+        placeholder="Post title"
+        id="post-title"
+        value={postTitles}
+        onChange={(e) => handlePostTitleChange(e)}
+        rows={1}
+        className="font-montserrart w-full overflow-y-hidden resize-none bg-transparent focus:border-none outline-none box-border h-auto"
+        style={{
+          scrollbarWidth: "thin",
+          scrollbarColor: "transparent transparent",
+        }}
         />
         <p
           id="postTitle"

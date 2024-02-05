@@ -15,7 +15,7 @@ const config: Config = {
       colors:{
         primary:"#B1F827",
         secondary:"#313338",
-        primaryBg:"#16181C",
+        primaryBg:"#16181C"
       },
       fontFamily:{
         montserrart:["Montserrat",'sans-serif'],

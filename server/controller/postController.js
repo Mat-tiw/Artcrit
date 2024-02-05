@@ -54,6 +54,7 @@ export const testFile = (req, res) => {
 export const getAllPost = async (req, res) => {
   try {
     const postsWithImages = await Post.findAll({
+      order: [["created_at", "DESC"]],
       include: [
         {
           model: Image,
@@ -65,7 +66,6 @@ export const getAllPost = async (req, res) => {
         },
       ],
     });
-
     res.json(postsWithImages);
   } catch (error) {
     console.error("Error fetching posts and images:", error);

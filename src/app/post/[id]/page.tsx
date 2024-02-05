@@ -61,6 +61,9 @@ export default function Pages({ params }: Readonly<{ params: { id: number } }>) 
             date={post.created_at}
             images={post.ac_images}
             userPic={post.ac_user.user_avatar}
+            userId = {post.ac_user.id_user}
+            post_id={post.id_post}
+            isInProfile={false}
           />
         ) : (
           <div className="animate-pulse p-2">
@@ -71,6 +74,7 @@ export default function Pages({ params }: Readonly<{ params: { id: number } }>) 
             userName="loading..."
             images={[]}
             userPic=""
+            isInProfile={true}
           />
           </div>
         )}

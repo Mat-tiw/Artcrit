@@ -7,7 +7,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useRouter } from "next/navigation";
 import { Comments } from "./comments";
 import { CommentsInput } from "./commentsInput";
-
+import Link from "next/link";
 interface PostProps {
   title?: string;
   badge?: string;
@@ -16,7 +16,9 @@ interface PostProps {
   images?: Array<{ id_image: number; image_path: string }>;
   userPic?: string;
   userId?: number;
-  showComment: boolean;
+  showComment?: boolean;
+  isInProfile?: boolean;
+  post_id?: number;
 }
 
 const formattedDate = (rawDate: string | undefined) => {
@@ -35,7 +37,6 @@ const formattedDate = (rawDate: string | undefined) => {
     ? new Intl.DateTimeFormat("en-US", options).format(dateObject)
     : "";
 };
-
 const Posts: React.FC<PostProps> = ({
   title,
   badge,
@@ -45,6 +46,8 @@ const Posts: React.FC<PostProps> = ({
   userPic,
   userId,
   showComment,
+  isInProfile,
+  post_id,
 }) => {
   const router = useRouter();
 
@@ -74,7 +77,7 @@ const Posts: React.FC<PostProps> = ({
       <div className={`flex flex-wrap justify-center p-5 ${layout}`}>
         {images.map((image, index) => (
           <Image
-            key={index}
+            key={image.id_image}
             src={image.image_path}
             width={getLayoutImage(layout, index)}
             height={getLayoutImage(layout, index)}
@@ -137,7 +140,7 @@ const Posts: React.FC<PostProps> = ({
   const handleClick = (id: number | null | undefined) => {
     if (id === null || id === undefined) return;
 
-    if (router && router.push) {
+    if (router?.push) {
       router.push("/post/" + id);
     } else {
       console.error("Router object is not ready.");
@@ -145,12 +148,9 @@ const Posts: React.FC<PostProps> = ({
   };
 
   return (
-    <div
-      className="m-5 flex flex-col bg-secondary rounded-xl text-white"
-      onClick={() => handleClick(userId)}
-    >
-      <div className="p-5 flex">
-        <div className="">
+    <div className="m-5 flex flex-col bg-secondary rounded-xl text-white -z-10">
+      <div className="p-5 flex z-10">
+        {isInProfile ? (
           <Avatar
             className=""
             src={userPic}
@@ -159,19 +159,32 @@ const Posts: React.FC<PostProps> = ({
               height: 64,
             }}
           />
-        </div>
-        <div className="flex flex-col pl-2">
-          <h1 className="font-montserrart font-bold text-1xl">{userName}</h1>
+        ) : (
+          <Link href={`/user/${userId}`} className="z-10 hover:-translate-y-0.5 hover:translate-x-0.5">
+            <Avatar
+              className=""
+              src={userPic}
+              sx={{
+                width: 64,
+                height: 64,
+              }}
+            />
+          </Link>
+        )}
+        <div className="flex flex-col pl-2 z-10">
+          <button className="font-montserrart font-bold text-1xl text-left hover:underline-offset-2 hover:underline">{userName}</button>
           <h1>{formattedDate(date)}</h1>
         </div>
       </div>
-      <div className="pl-16">
+      <div className="" onClick={()=>handleClick(post_id)}>
+      <div className="pl-16 z-10">
         <p className="font-karla text-wrap mr-6">{title}</p>
 
         <span className="p-0.5 bg-red-600 rounded-sm">{badge}</span>
       </div>
       {renderImages()}
-      <div className="flex flex-row">
+      </div>
+      <div className="flex flex-row z-10">
         <div className="flex flex-row m-2 p-2 rounded-sm hover:bg-gray-400 hover:cursor-pointer hover:transition-colors ease-in duration-300">
           <FavoriteBorderIcon
             className=""
@@ -182,7 +195,8 @@ const Posts: React.FC<PostProps> = ({
           />
           <p className="m-2">Like</p>
         </div>
-        <div className="flex flex-row m-2 p-2 rounded-sm hover:bg-gray-400 hover:cursor-pointer hover:transition-colors ease-in duration-300">
+        <Link href={`/post/${post_id}`}>
+        <div className="flex flex-row m-2 p-2 rounded-sm hover:bg-gray-400 hover:cursor-pointer hover:transition-colors ease-in duration-300" >
           <ChatBubbleOutlineIcon
             className=""
             sx={{
@@ -192,30 +206,32 @@ const Posts: React.FC<PostProps> = ({
           />
           <p className="m-2 ">Comments</p>
         </div>
+        </Link>
       </div>
+      
       {showComment ? (
-        <div className="flex flex-col p-5">
-            <div className="">
-              <CommentsInput />
-            </div>
-            <Comments
-              userName="Tester1"
-              userPic="http://localhost:3030/static/3d99072c88image-5.jpg"
-              commentPoint={24}
-              commentContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
-              testImage={true}
-              imgPath="http://localhost:3030/static/cmpreview.png"
-            />
-            <div className="ml-10">
-              <Comments
-                userName="Tester2"
-                userPic="http://localhost:3030/static/def.jpg"
-                commentPoint={2}
-                commentContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
-                testImage={false}
-              />
-            </div>
+        <div className="flex flex-col p-5 z-10">
+          <div className="">
+            <CommentsInput />
           </div>
+          <Comments
+            userName="Tester1"
+            userPic="http://localhost:3030/static/3d99072c88image-5.jpg"
+            commentPoint={24}
+            commentContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+            testImage={true}
+            imgPath="http://localhost:3030/static/cmpreview.png"
+          />
+          <div className="ml-10">
+            <Comments
+              userName="Tester2"
+              userPic="http://localhost:3030/static/def.jpg"
+              commentPoint={2}
+              commentContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+              testImage={false}
+            />
+          </div>
+        </div>
       ) : (
         ""
       )}

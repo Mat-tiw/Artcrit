@@ -198,6 +198,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                         date={post.created_at}
                         images={post.ac_images}
                         userPic={post.ac_user.user_avatar}
+                        isInProfile={true}
                       />
                     ))
                   )}

@@ -88,13 +88,14 @@ export default function Home() {
               <Posts
               showComment={false}
                 key={post.id_post}
-                userId={post.id_post}
+                post_id={post.id_post}
                 title={post.post_title}
                 badge={post.post_badge}
                 userName={post.ac_user.user_name}
                 date={post.created_at}
                 images={post.ac_images}
                 userPic={post.ac_user.user_avatar}
+                userId={post.ac_user.id_user}
               />
             ))
           ) : (

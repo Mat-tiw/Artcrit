@@ -26,7 +26,7 @@ export const CommentsInput = () => {
             <textarea
               ref={textareaRef}
               placeholder="What are your thoughts?"
-              id="dynamicInput"
+              id="comment-content"
               value={comments}
               onChange={(e) => handleTextareaChange(e)}
               className="ml-2 w-full overflow-y-hidden resize-none bg-transparent border-b-2 focus:border-none focus:border-b-2 outline-none box-border h-auto pb-0.5"
