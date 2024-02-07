@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ChangeEvent, useRef } from "react";
 import Banner from "@/app/components/ui/header";
 import { Sidebar } from "@/app/components/ui/sidebar";
 import { Avatar } from "@mui/material";
@@ -7,6 +7,22 @@ import { defaultBackend, userId } from "@/api/api.js";
 import axios from "axios";
 import { Posts } from "@/app/components/ui/posts";
 import Image from "next/image";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "#16181C",
+  border: "4px solid #B1F827",
+  p: 4,
+  color: "white",
+  borderRadius: "0.75rem",
+};
+
 interface Images {
   id_image: number;
   image_path: string;
@@ -33,7 +49,21 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
   const [image, setImage] = useState<Images[]>([]);
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [noPost, setNoPost] = useState(true);
+
+  const [editBio, setEditBio] = useState<string>("");
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const handleTextareaChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setEditBio(e.target.value);
+    const bioarea = textareaRef.current;
+    if (bioarea) {
+      bioarea.style.height = "auto";
+      bioarea.style.height = `${bioarea.scrollHeight}px`;
+    }
+  };
   const [editActive, setEditActive] = useState(false);
+  const handleClose = () => setEditActive(false);
+  const handleOpen = () => setEditActive(true);
+
   const updateUserId = userId !== null ? parseInt(userId) : null;
   useEffect(() => {
     const fetchUser = async () => {
@@ -95,7 +125,10 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                   </h1>
                   {updateUserId == params.id ? (
                     <div className="flex w-full flex-row-reverse mr-2">
-                      <button className="font-montserrart font-semibold border-2 border-primary text-primary rounded-3xl p-1">
+                      <button
+                        className="font-montserrart font-semibold border-2 border-primary text-primary rounded-3xl p-1"
+                        onClick={handleOpen}
+                      >
                         Edit profile
                       </button>
                     </div>
@@ -111,6 +144,48 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                 </p>
               </div>
             </div>
+            <Modal
+              open={editActive}
+              onClose={handleClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={style}>
+                <div className=""></div>
+                <div className="flex flex-col">
+                  <h1 className="font-bold font-montserrart text-2xl">
+                    Edit profile
+                  </h1>
+                  <div className="flex w-full justify-center mt-2">
+                    <Avatar
+                      src={user?.user_avatar}
+                      sx={{
+                        width: 100,
+                        height: 100,
+                      }}
+                    />
+                  </div>
+                  <input
+                    className="mt-2 font-montserrart text-xl bg-transparent border-none focus:border-none outline-none"
+                    type="text"
+                    placeholder="Username"
+                  />
+                  <textarea
+                    ref={textareaRef}
+                    placeholder="user bio"
+                    onChange={(e) => handleTextareaChange(e)}
+                    value={editBio}
+                    className="mt-2 font-montserrart text-xl w-full overflow-y-hidden resize-none bg-transparent focus:border-none outline-none box-border h-auto pb-0.5"
+                    style={{
+                      scrollbarWidth: "thin",
+                      scrollbarColor: "transparent transparent",
+                    }}
+                    rows={1}
+                  />
+                  <div className="flex flex-row-reverse"><button className="mt-2 font-montserrart text-xl border-primary border-2 rounded-lg p-2">Submit</button></div>
+                </div>
+              </Box>
+            </Modal>
             <div className="flex flex-row mt-12 ml-10 space-x-6">
               <button
                 className={`text-xl ${

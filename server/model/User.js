@@ -32,6 +32,10 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    user_bio:{
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     Sequelize,
