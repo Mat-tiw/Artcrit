@@ -137,16 +137,6 @@ const Posts: React.FC<PostProps> = ({
     return objectPositionMap[layout]?.[index] || "";
   };
 
-  const handleClick = (id: number | null | undefined) => {
-    if (id === null || id === undefined) return;
-
-    if (router?.push) {
-      router.push("/post/" + id);
-    } else {
-      console.error("Router object is not ready.");
-    }
-  };
-
   return (
     <div className="m-5 flex flex-col bg-secondary rounded-xl text-white -z-10">
       <div className="p-5 flex z-10">
@@ -160,7 +150,10 @@ const Posts: React.FC<PostProps> = ({
             }}
           />
         ) : (
-          <Link href={`/user/${userId}`} className="z-10 hover:-translate-y-0.5 hover:translate-x-0.5">
+          <Link
+            href={`/user/${userId}`}
+            className="z-10 hover:-translate-y-0.5 hover:translate-x-0.5"
+          >
             <Avatar
               className=""
               src={userPic}
@@ -172,18 +165,23 @@ const Posts: React.FC<PostProps> = ({
           </Link>
         )}
         <div className="flex flex-col pl-2 z-10">
-          <button className="font-montserrart font-bold text-1xl text-left hover:underline-offset-2 hover:underline">{userName}</button>
+          <button
+            className="font-montserrart font-bold text-1xl text-left hover:underline-offset-2 hover:underline"
+            onClick={() => router.push(`/user/${userId}`)}
+          >
+            {userName}
+          </button>
           <h1>{formattedDate(date)}</h1>
         </div>
       </div>
-      <div className="" onClick={()=>handleClick(post_id)}>
-      <div className="pl-16 z-10">
-        <p className="font-karla text-wrap mr-6">{title}</p>
+      <Link href={`/post/${post_id}`}>
+        <div className="pl-16 z-10">
+          <p className="font-karla text-wrap mr-6">{title}</p>
 
-        <span className="p-0.5 bg-red-600 rounded-sm">{badge}</span>
-      </div>
-      {renderImages()}
-      </div>
+          <span className="p-0.5 bg-red-600 rounded-sm">{badge}</span>
+        </div>
+        {renderImages()}
+      </Link>
       <div className="flex flex-row z-10">
         <div className="flex flex-row m-2 p-2 rounded-sm hover:bg-gray-400 hover:cursor-pointer hover:transition-colors ease-in duration-300">
           <FavoriteBorderIcon
@@ -196,19 +194,19 @@ const Posts: React.FC<PostProps> = ({
           <p className="m-2">Like</p>
         </div>
         <Link href={`/post/${post_id}`}>
-        <div className="flex flex-row m-2 p-2 rounded-sm hover:bg-gray-400 hover:cursor-pointer hover:transition-colors ease-in duration-300" >
-          <ChatBubbleOutlineIcon
-            className=""
-            sx={{
-              width: 36,
-              height: 36,
-            }}
-          />
-          <p className="m-2 ">Comments</p>
-        </div>
+          <div className="flex flex-row m-2 p-2 rounded-sm hover:bg-gray-400 hover:cursor-pointer hover:transition-colors ease-in duration-300">
+            <ChatBubbleOutlineIcon
+              className=""
+              sx={{
+                width: 36,
+                height: 36,
+              }}
+            />
+            <p className="m-2 ">Comments</p>
+          </div>
         </Link>
       </div>
-      
+
       {showComment ? (
         <div className="flex flex-col p-5 z-10">
           <div className="">

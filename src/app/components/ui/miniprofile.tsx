@@ -1,12 +1,11 @@
 import { Avatar } from "@mui/material";
-import React from "react";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { login, userPic, defaultBackend } from "../../../api/api.js";
 const style = {
-  position: "absolute" as "absolute",
+  position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -18,8 +17,9 @@ const style = {
   borderRadius: "0.75rem",
 };
 
-const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
-const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+const USER_REGEX = /^[A-Za-z][A-Za-z0-9-_]{3,23}$/;
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%]).{8,24}$/;
+
 
 const MiniProfile: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -30,7 +30,7 @@ const MiniProfile: React.FC = () => {
   const handleOpenRegi = () => setOpenRegi(true);
   const handleCloseRegi = () => setOpenRegi(false);
 
-  const [user, setInputUser] = useState<string>("");
+  const [user, setUser] = useState<string>("");
   const [validName, setValidName] = useState<boolean>(false);
   const [userFocus, setUserFocus] = useState(false);
 
@@ -71,7 +71,7 @@ const MiniProfile: React.FC = () => {
   };
   const handleSubmitCreate = async () => {
     try {
-      const res = await axios.post("user/create", {
+      const res = await axios.post(`${defaultBackend}user/create`, {
         user: user,
         pwd: pwd,
       });
@@ -87,7 +87,7 @@ const MiniProfile: React.FC = () => {
         {login ? (
           <Avatar
             alt="Remy Sharp"
-            src={userPic !== null ? userPic : ""}
+            src={userPic ?? ""}
             className="m-5"
             sx={{ width: 100, height: 100 }}
           />
@@ -99,20 +99,20 @@ const MiniProfile: React.FC = () => {
             {localStorage.getItem("userName")}
           </h1>
         ) : (
-          <div className="mt-5 mb-4">
-            <h1
+          <div className="mt-5 mb-4 flex flex-col">
+            <button
               className="text-center item-center text-primary font-montserrat font-bold p-2 mb-2 text-2xl cursor-pointer border-2 border-primary rounded-xl"
               onClick={handleOpen}
             >
-              login
-            </h1>
+              Login
+            </button>
             <i className="border-b-gray-400 w-full border-1"></i>
-            <h1
+            <button
               className="text-center text-primary font-montserrat font-bold p-2 mb-2 text-2xl cursor-pointer border-2 border-primary rounded-xl"
               onClick={handleOpenRegi}
             >
-              register
-            </h1>
+              Register
+            </button>
           </div>
         )}
       </div>
@@ -126,7 +126,7 @@ const MiniProfile: React.FC = () => {
           <h1 className="font-montserrart text-2xl font-bold">Login</h1>
           <input
             type="text"
-            onChange={(e) => setInputUser(e.target.value)}
+            onChange={(e) => setUser(e.target.value)}
             className="
             text-xl font-montserrart
             bg-transparent m-5 border-white border-2 border-t-transparent border-r-transparent border-l-transparent focus:border-t-transparent"
@@ -165,7 +165,7 @@ const MiniProfile: React.FC = () => {
             text-xl font-montserrart
             bg-transparent m-5 border-white border-2 border-t-transparent border-r-transparent border-l-transparent focus:border-t-transparent"
             placeholder="username"
-            onChange={(e) => setInputUser(e.target.value)}
+            onChange={(e) => setUser(e.target.value)}
             onFocus={() => setUserFocus(true)}
             onBlur={() => setUserFocus(false)}
           />
@@ -240,7 +240,7 @@ const MiniProfile: React.FC = () => {
             Must match the first password input field.
           </p>
           <button
-            disabled={!validName || !validPwd || !validMatch ? true : false}
+            disabled={!validName || !validPwd || !validMatch}
             onClick={handleSubmitCreate}
             className={
               !validName || !validPwd || !validMatch

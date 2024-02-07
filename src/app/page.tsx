@@ -65,7 +65,7 @@ export default function Home() {
               </div>
               <div className="pl-5 mb-5 flex pt-4">
                 <Avatar
-                  src={userPic !== null ? userPic : ""}
+                  src={userPic??""}
                   sx={{
                     width: 58,
                     height: 58,

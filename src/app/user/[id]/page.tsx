@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Banner from "@/app/components/ui/header";
 import { Sidebar } from "@/app/components/ui/sidebar";
 import { Avatar } from "@mui/material";
-import { defaultBackend } from "@/api/api.js";
+import { defaultBackend, userId } from "@/api/api.js";
 import axios from "axios";
 import { Posts } from "@/app/components/ui/posts";
 import Image from "next/image";
@@ -30,9 +30,11 @@ interface User {
 export default function Page({ params }: Readonly<{ params: { id: number } }>) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [user, setUser] = useState<User>();
-  const [image,setImage] = useState<Images[]>([]);
+  const [image, setImage] = useState<Images[]>([]);
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [noPost, setNoPost] = useState(true);
+  const [editActive, setEditActive] = useState(false);
+  const updateUserId = userId !== null ? parseInt(userId) : null;
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -57,20 +59,20 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
     fetchUserPost();
   }, [params.id]);
   useEffect(() => {
-    const fetchImage = async () =>{
-      console.log('above fetch image')
+    const fetchImage = async () => {
+      console.log("above fetch image");
       try {
-        const res = await axios.get(`${defaultBackend}image/${params.id}`)
-        setImage(res.data)
+        const res = await axios.get(`${defaultBackend}image/${params.id}`);
+        setImage(res.data);
       } catch (error) {
-        console.log("hello fro error",error)
+        console.log("error: ", error);
         setNoPost(true);
       }
-    }
-    fetchImage()
-  },[params.id])
+    };
+    fetchImage();
+  }, [params.id]);
   return (
-    <div className="">
+    <div className="flex flex-col">
       <Banner />
       <div className="min-h-screen bg-primaryBg flex flex-row">
         <div className="text-white basis-[20%] flex flex-col">
@@ -87,9 +89,20 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                 }}
               />
               <div className="flex flex-col ml-10">
-                <h1 className="font-montserrart font-bold text-4xl">
-                  {user?.user_name}
-                </h1>
+                <div className="flex flex-row">
+                  <h1 className="font-montserrart font-bold text-4xl">
+                    {user?.user_name}
+                  </h1>
+                  {updateUserId == params.id ? (
+                    <div className="flex w-full flex-row-reverse mr-2">
+                      <button className="font-montserrart font-semibold border-2 border-primary text-primary rounded-3xl p-1">
+                        Edit profile
+                      </button>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
                 <p className="mt-2">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -205,13 +218,28 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                 </div>
               )}
               {activeTab === "comments" && <div className=""></div>}
-              {activeTab === "media" && <div className="">
-                {noPost ? (<div><h1>User has no media</h1></div>):(<div className="flex flex-row flex-wrap m-2">
-                  {image.map((images)=>(
-                    <Image className="object-cover m-2" key={images.id_image} src={images.image_path} width={500} height={500} alt="placeholder"/>
-                  ))}
-                </div>)}
-                </div>}
+              {activeTab === "media" && (
+                <div className="">
+                  {noPost ? (
+                    <div>
+                      <h1>User has no media</h1>
+                    </div>
+                  ) : (
+                    <div className="flex flex-row flex-wrap m-2">
+                      {image.map((images) => (
+                        <Image
+                          className="object-cover m-2"
+                          key={images.id_image}
+                          src={images.image_path}
+                          width={500}
+                          height={500}
+                          alt="placeholder"
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
               {activeTab === "like" && <div className=""></div>}
             </>
           )}
