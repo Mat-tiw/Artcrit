@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, ChangeEvent, useRef } from "react";
+import React, { useState, useEffect, ChangeEvent, useRef, FormEvent } from "react";
 import Banner from "@/app/components/ui/header";
 import { Sidebar } from "@/app/components/ui/sidebar";
 import { Avatar } from "@mui/material";
@@ -9,6 +9,8 @@ import { Posts } from "@/app/components/ui/posts";
 import Image from "next/image";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
+import EditIcon from "@mui/icons-material/Edit";
+
 
 const style = {
   position: "absolute",
@@ -42,6 +44,7 @@ interface User {
   user_email: string;
   user_avatar: string;
   id_user: number;
+  user_bio: string;
 }
 export default function Page({ params }: Readonly<{ params: { id: number } }>) {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -49,9 +52,39 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
   const [image, setImage] = useState<Images[]>([]);
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [noPost, setNoPost] = useState(true);
+  const [editUserName, setEditUserName] = useState<string>("");
 
   const [editBio, setEditBio] = useState<string>("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setSelectedFile(files[0]);
+    }
+  };
+  const handleUpdateClick = async(e: FormEvent<HTMLFormElement>)=>{
+    try {
+      const formData = new FormData();
+      formData.append("editUserName",editUserName)
+      formData.append("editBio",editBio)
+      if(selectedFile){
+        formData.append("file",selectedFile)
+      }
+      const response = await axios.post(`${defaultBackend}user/update/${userId}`,formData)
+      console.log(response)
+      console.log("send?")
+    } catch (error) {
+      console.error("Error creating post:", error);
+    }
+  }
   const handleTextareaChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setEditBio(e.target.value);
     const bioarea = textareaRef.current;
@@ -63,6 +96,8 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
   const [editActive, setEditActive] = useState(false);
   const handleClose = () => setEditActive(false);
   const handleOpen = () => setEditActive(true);
+
+  const [isHovered, setIsHovered] = useState(false);
 
   const updateUserId = userId !== null ? parseInt(userId) : null;
   useEffect(() => {
@@ -90,7 +125,6 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
   }, [params.id]);
   useEffect(() => {
     const fetchImage = async () => {
-      console.log("above fetch image");
       try {
         const res = await axios.get(`${defaultBackend}image/${params.id}`);
         setImage(res.data);
@@ -110,7 +144,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
         </div>
         <div className="text-white basis-[60%]">
           <div className="flex flex-col">
-            <div className="flex flex-row mt-12 ml-6">
+            <div className="flex flex-row mt-12 ml-6 w-min-full">
               <Avatar
                 src={user?.user_avatar}
                 sx={{
@@ -118,30 +152,23 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                   height: 136,
                 }}
               />
-              <div className="flex flex-col ml-10">
-                <div className="flex flex-row">
+              <div className="flex flex-col ml-10 w-full">
+                <div className="flex flex-row gap-x-64">
                   <h1 className="font-montserrart font-bold text-4xl">
                     {user?.user_name}
                   </h1>
                   {updateUserId == params.id ? (
-                    <div className="flex w-full flex-row-reverse mr-2">
-                      <button
-                        className="font-montserrart font-semibold border-2 border-primary text-primary rounded-3xl p-1"
-                        onClick={handleOpen}
-                      >
-                        Edit profile
-                      </button>
-                    </div>
+                    <button
+                      className="font-montserrart font-semibold border-2 border-primary text-primary rounded-3xl p-1"
+                      onClick={handleOpen}
+                    >
+                      Edit profile
+                    </button>
                   ) : (
                     ""
                   )}
                 </div>
-                <p className="mt-2">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut
-                </p>
+                <p className="mt-2 min-w-fit">{user?.user_bio}</p>
               </div>
             </div>
             <Modal
@@ -151,39 +178,79 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
               aria-describedby="modal-modal-description"
             >
               <Box sx={style}>
-                <div className=""></div>
-                <div className="flex flex-col">
+                <form onSubmit={handleUpdateClick} className="flex flex-col">
                   <h1 className="font-bold font-montserrart text-2xl">
                     Edit profile
                   </h1>
-                  <div className="flex w-full justify-center mt-2">
-                    <Avatar
-                      src={user?.user_avatar}
-                      sx={{
-                        width: 100,
-                        height: 100,
-                      }}
+                  <p>user avatar:</p>
+                  <div
+                    className="flex w-full justify-center mt-2"
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    onClick={handleAvatarClick}
+                  >
+                    <div
+                      className="relative cursor-pointer"
+                      style={{ opacity: isHovered ? 0.7 : 1 }}
+                    >
+                      <Avatar
+                        src={
+                          selectedFile
+                            ? URL.createObjectURL(selectedFile)
+                            : user?.user_avatar
+                        }
+                        sx={{
+                          width: 100,
+                          height: 100,
+                        }}
+                      />
+                      {isHovered && (
+                        <EditIcon
+                          className="absolute bottom-0 right-0 text-gray-300 bg-white rounded-full p-1"
+                          style={{ transform: "translate(50%, 50%)" }}
+                        />
+                      )}
+                    </div>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      style={{ display: "none" }}
+                      onChange={handleFileChange}
                     />
                   </div>
-                  <input
-                    className="mt-2 font-montserrart text-xl bg-transparent border-none focus:border-none outline-none"
-                    type="text"
-                    placeholder="Username"
-                  />
-                  <textarea
-                    ref={textareaRef}
-                    placeholder="user bio"
-                    onChange={(e) => handleTextareaChange(e)}
-                    value={editBio}
-                    className="mt-2 font-montserrart text-xl w-full overflow-y-hidden resize-none bg-transparent focus:border-none outline-none box-border h-auto pb-0.5"
-                    style={{
-                      scrollbarWidth: "thin",
-                      scrollbarColor: "transparent transparent",
-                    }}
-                    rows={1}
-                  />
-                  <div className="flex flex-row-reverse"><button className="mt-2 font-montserrart text-xl border-primary border-2 rounded-lg p-2">Submit</button></div>
-                </div>
+                  <p className="font-montserrart">username:</p>
+                  <div className="flex flex-row">
+                    <EditIcon className="text-gray-300 mt-3 mr-2" />
+                    <input
+                      value={editUserName ?? ""}
+                      className="mt-2 font-karla text-xl bg-transparent border-none focus:border-none outline-none placeholder-white"
+                      type="text"
+                      placeholder={user?.user_name}
+                      onChange={(e) => setEditUserName(e.target.value)}
+                    />
+                  </div>
+                  <p className="font-montserrart">user bio:</p>
+                  <div className="flex flex-row">
+                    <EditIcon className="text-gray-300 mt-3 mr-2" />
+                    <textarea
+                      ref={textareaRef}
+                      placeholder={user?.user_bio}
+                      onChange={(e) => handleTextareaChange(e)}
+                      value={editBio}
+                      className="mt-2 font-karla placeholder-white text-xl w-full overflow-y-hidden resize-none bg-transparent focus:border-none outline-none box-border h-auto pb-0.5"
+                      style={{
+                        scrollbarWidth: "thin",
+                        scrollbarColor: "transparent transparent",
+                      }}
+                      rows={1}
+                    />
+                  </div>
+                  <div className="flex flex-row-reverse">
+                    <button type="submit" className="mt-2 font-montserrart text-xl border-primary border-2 rounded-lg p-2">
+                      Submit
+                    </button>
+                  </div>
+                </form>
               </Box>
             </Modal>
             <div className="flex flex-row mt-12 ml-10 space-x-6">

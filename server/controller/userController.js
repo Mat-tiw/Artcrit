@@ -1,6 +1,46 @@
 import User from "../model/User.js";
 import bcrypt from "bcrypt";
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import crypto from "crypto";
+import multer from "multer";
+
+function generateRandomString(length) {
+  return crypto.randomBytes(length).toString("hex");
+}
+const __filename = fileURLToPath(import.meta.url);
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadPath = "D:/Desktop/artcrit-alpha/artcrit-early/server/public/userpf";
+    cb(null, uploadPath);
+  },
+  filename: function (req, file, cb) {
+    const randomString = generateRandomString(5);
+    cb(null, `${randomString}${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
+
+export const updateUser = async (req,res)=>{
+  const userId = req.params.id;
+  const {editUserName,editBio} = req.body;
+  const file = req.files;
+  let user_name = editUserName
+  let user_bio = editBio
+  console.log(userId,req.body,file)
+  // try {
+  //   const user = await User.update({user_name:user_name,user_bio:user_bio,user_avatar:`http://localhost:3030/static/userpf/${file.filename}`},{where:{
+  //     id_user:userId
+  //   }})
+  //   return res.status(200).json(user)
+  // } catch (error) {
+  //   return res.status(500)
+  // }
+}
+
+export const updateUserAvatar = upload.single('file')
 
 export const allUser = async (req, res) => {
   try {

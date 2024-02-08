@@ -12,8 +12,8 @@ export const CommentsInput = () => {
     const textarea = textareaRef.current;
 
     if (textarea) {
-      textarea.style.height = "auto"; // Reset the height to auto
-      textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to the scrollHeight
+      textarea.style.height = "auto";
+      textarea.style.height = `${textarea.scrollHeight}px`;
     }
   };
 
