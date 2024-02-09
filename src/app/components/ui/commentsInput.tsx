@@ -1,11 +1,17 @@
 import React, { useState, ChangeEvent, useRef } from "react";
 import { Avatar } from "@mui/material";
-import { login, userPic } from "../../../api/api.js";
+import { defaultBackend, login, userId, userPic } from "../../../api/api.js";
 
-export const CommentsInput = () => {
+interface CommentProps{
+  userId?:number;
+  postId?:number
+}
+export const CommentsInput:React.FC<CommentProps> = ({
+  userId,postId
+}) => {
   const [comments, setComments] = useState<string>("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-
+  const [files,setFiles] = useState<File[]>([]);
   const handleTextareaChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setComments(e.target.value);
 
@@ -16,6 +22,23 @@ export const CommentsInput = () => {
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
   };
+  const handleFormSubmit = async()=>{
+    try {
+      const formData = new FormData();
+      formData.append("commnetContent",comments)
+      const user_id = userId ?? ""
+      const post_id = postId ?? ""
+      formData.append("postId",post_id)
+      formData.append("userId",user_id)
+      if(files){
+        formData.append("file",files)
+      }
+      const upload = await axios.post(`${defaultBackend}/comment/add`,formData)
+      console.log(upload)
+    } catch (error) {
+      console.log(error)      
+    }
+  }
 
   return (
     <>
