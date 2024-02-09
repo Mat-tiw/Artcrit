@@ -28,7 +28,7 @@ const DragAndDrop = () => {
 
   const handleOnSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log();
+
     try {
       const formData = new FormData();
       formData.append("postTitles", postTitles);

@@ -9,7 +9,6 @@ function generateRandomString(length) {
   return crypto.randomBytes(length).toString("hex");
 }
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadPath = "D:/Desktop/artcrit-alpha/artcrit-early/server/public";

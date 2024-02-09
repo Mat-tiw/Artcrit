@@ -8,7 +8,7 @@ router.get("/user", allUser);
 router.post('/user/create',addUser);
 router.post('/user/login',loginUser)
 router.get('/user/:id', findUser);
-router.post('/user/update/:id',updateUser,updateUserAvatar)
+router.post('/user/update/:id', updateUserAvatar, updateUser);
 
 router.post('/post/create',uploadPostImage,createPost);
 router.post('/post/test',testFile);

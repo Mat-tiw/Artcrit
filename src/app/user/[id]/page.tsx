@@ -1,5 +1,11 @@
 "use client";
-import React, { useState, useEffect, ChangeEvent, useRef, FormEvent } from "react";
+import React, {
+  useState,
+  useEffect,
+  ChangeEvent,
+  useRef,
+  FormEvent,
+} from "react";
 import Banner from "@/app/components/ui/header";
 import { Sidebar } from "@/app/components/ui/sidebar";
 import { Avatar } from "@mui/material";
@@ -10,7 +16,6 @@ import Image from "next/image";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import EditIcon from "@mui/icons-material/Edit";
-
 
 const style = {
   position: "absolute",
@@ -70,21 +75,36 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
       setSelectedFile(files[0]);
     }
   };
-  const handleUpdateClick = async(e: FormEvent<HTMLFormElement>)=>{
+  const handleUpdateClick = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
       const formData = new FormData();
-      formData.append("editUserName",editUserName)
-      formData.append("editBio",editBio)
-      if(selectedFile){
-        formData.append("file",selectedFile)
+      if (editUserName === "") {
+        const defaultUserName = user?.user_name ?? "";
+        formData.append("editUserName", defaultUserName);
+      } else {
+        formData.append("editUserName", editUserName);
       }
-      const response = await axios.post(`${defaultBackend}user/update/${userId}`,formData)
-      console.log(response)
-      console.log("send?")
+      if (editBio === "") {
+        const defaultUserBio = user?.user_bio ?? "";
+        formData.append("editBio", defaultUserBio);
+      } else {
+        formData.append("editBio", editBio);
+      }
+      if (selectedFile) {
+        formData.append("selectedFile", selectedFile);
+      }
+      const response = await axios.post(
+        `${defaultBackend}user/update/${userId}`,
+        formData
+      );
+      console.log(response);
+      console.log("send?");
     } catch (error) {
-      console.error("Error creating post:", error);
+      console.error("Error updating user:", error);
     }
-  }
+  };
+
   const handleTextareaChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setEditBio(e.target.value);
     const bioarea = textareaRef.current;
@@ -246,7 +266,10 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                     />
                   </div>
                   <div className="flex flex-row-reverse">
-                    <button type="submit" className="mt-2 font-montserrart text-xl border-primary border-2 rounded-lg p-2">
+                    <button
+                      type="submit"
+                      className="mt-2 font-montserrart text-xl border-primary border-2 rounded-lg p-2"
+                    >
                       Submit
                     </button>
                   </div>

@@ -25,22 +25,29 @@ const upload = multer({ storage });
 
 export const updateUser = async (req,res)=>{
   const userId = req.params.id;
-  const {editUserName,editBio} = req.body;
-  const file = req.files;
+  const { editUserName, editBio } = req.body;
+  const selectedFile = req.file;
   let user_name = editUserName
   let user_bio = editBio
-  console.log(userId,req.body,file)
-  // try {
-  //   const user = await User.update({user_name:user_name,user_bio:user_bio,user_avatar:`http://localhost:3030/static/userpf/${file.filename}`},{where:{
-  //     id_user:userId
-  //   }})
-  //   return res.status(200).json(user)
-  // } catch (error) {
-  //   return res.status(500)
-  // }
+  try {
+    if(selectedFile === null || selectedFile === undefined){
+      const user = await User.update({user_name:user_name,user_bio:user_bio},{where:{
+      id_user:userId
+    }})
+    return res.status(200).json(user)
+    }else{
+      const user = await User.update({user_name:user_name,user_bio:user_bio,user_avatar:`http://localhost:3030/static/userpf/${selectedFile.filename}`},{where:{
+        id_user:userId
+      }})
+      return res.status(200).json(user)
+    }
+
+  } catch (error) {
+    return res.status(500)
+  }
 }
 
-export const updateUserAvatar = upload.single('file')
+export const updateUserAvatar = upload.single('selectedFile')
 
 export const allUser = async (req, res) => {
   try {
