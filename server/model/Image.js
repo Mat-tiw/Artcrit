@@ -21,6 +21,10 @@ const Image = sequelize.define(
       type: DataTypes.DATE,
       allowNull: true,
     },
+    comment_id:{
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    }
   },
   {
     Sequelize,

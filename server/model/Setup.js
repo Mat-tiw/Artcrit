@@ -40,6 +40,10 @@ Image.belongsTo(User,{
   foreignKey:'user_id',
   targetKey: 'id_user'
 })
+Image.belongsTo(Comment,{
+  foreignKey:'comment_id',
+  targetKey: 'id_comment'
+})
 
 
 Comment.belongsTo(Post,{
@@ -49,4 +53,8 @@ Comment.belongsTo(Post,{
 Comment.belongsTo(User,{
   foreignKey:'user_id',
   targetKey: 'id_user'
+})
+Comment.hasMany(Image,{
+  foreignKey:'comment_id',
+  sourceKey:'id_comment'
 })

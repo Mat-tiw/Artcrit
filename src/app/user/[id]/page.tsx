@@ -53,6 +53,9 @@ interface User {
 }
 export default function Page({ params }: Readonly<{ params: { id: number } }>) {
   const [posts, setPosts] = useState<Post[]>([]);
+  // post = ""
+  // setPosts("a")
+  // post = a
   const [user, setUser] = useState<User>();
   const [image, setImage] = useState<Images[]>([]);
   const [activeTab, setActiveTab] = useState<string>("overview");
@@ -79,7 +82,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
     e.preventDefault();
     try {
       const formData = new FormData();
-      if (editUserName === "") {
+      if (editUserName === "") { 
         const defaultUserName = user?.user_name ?? "";
         formData.append("editUserName", defaultUserName);
       } else {
