@@ -19,7 +19,6 @@ function generateRandomString(length) {
       cb(null, `${randomString}${file.originalname}`);
     },
   });
-  
   const upload = multer({ storage });
 
 export const getAllComment = async(req,res)=>{
@@ -30,7 +29,6 @@ export const getAllComment = async(req,res)=>{
         res.status(500).json({message:"internal server error"})
     }
 }
-
 export const addComment = async(req,res)=>{
     const id = params.id
     const {commentContent,userId} = req.body
@@ -38,8 +36,8 @@ export const addComment = async(req,res)=>{
     try {
         const data = await Comment.create({
             comment_content:commentContent,
-            user_id = userId,
-            post_id = id
+            user_id: userId,
+            post_id: id
         })
         const imagePromises = files.map(async(image)=>{
           return await Image.create({

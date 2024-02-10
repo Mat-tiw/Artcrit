@@ -1,14 +1,14 @@
-import React, { useState, ChangeEvent, useRef } from "react";
+import React, { useState, ChangeEvent, useRef,useCallback,FormEvent } from "react";
 import { Avatar } from "@mui/material";
 import { defaultBackend, login, userId, userPic } from "../../../api/api.js";
-
+import axios from "axios";
 interface CommentProps{
-  userId?:number;
   postId?:number
 }
 export const CommentsInput:React.FC<CommentProps> = ({
-  userId,postId
+postId
 }) => {
+  const maxFiles = 4;
   const [comments, setComments] = useState<string>("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [files,setFiles] = useState<File[]>([]);
@@ -22,17 +22,20 @@ export const CommentsInput:React.FC<CommentProps> = ({
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
   };
-  const handleFormSubmit = async()=>{
+  const handleFormSubmit = async(e: FormEvent<HTMLFormElement>)=>{
+    e.preventDefault();
     try {
       const formData = new FormData();
       formData.append("commnetContent",comments)
-      const user_id = userId ?? ""
-      const post_id = postId ?? ""
-      formData.append("postId",post_id)
-      formData.append("userId",user_id)
-      if(files){
-        formData.append("file",files)
+      if (postId !== undefined) {
+        formData.append("postId", postId.toString());
       }
+      if(userId!==null){
+        formData.append("userId",userId)
+      }
+      files.forEach((file)=>{
+        formData.append("files",file)
+      })
       const upload = await axios.post(`${defaultBackend}/comment/add`,formData)
       console.log(upload)
     } catch (error) {
@@ -40,6 +43,20 @@ export const CommentsInput:React.FC<CommentProps> = ({
     }
   }
 
+  const handleFile = useCallback((e:React.ChangeEvent<HTMLInputElement>)=>{
+    let selectFiles:File[] = Array.from(e.target.files ?? []);
+    let fileArray:File[] = [...files]
+    if(files.length >= maxFiles){
+      return
+    }
+    if(selectFiles !== null){
+      selectFiles.map((file)=>{
+        fileArray.push(file)
+        setFiles(fileArray)
+      })
+    }
+  },[files,maxFiles])
+  console.log(files)
   return (
     <>
       {login ? (
@@ -60,6 +77,7 @@ export const CommentsInput:React.FC<CommentProps> = ({
               rows={1}
             />
           </div>
+          <input onChange={handleFile} type="file" name="" id="" />
         </div>
       ) : (
         <div className="font-montserrart text-white border-red-500 text-center items-center border-2 rounded-lg ">
