@@ -1,5 +1,7 @@
 import Post from "../model/Post.js";
 import Image from "../model/Image.js";
+import Vote from '../model/Vote.js';
+import Comment from '../model/Comment.js';
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import multer from "multer";
@@ -117,3 +119,47 @@ export const getUserPost = async (req, res) => {
   } catch (error) {}
 };
 export const uploadPostImage = upload.array("files", 4);
+
+export const getPostWithComments = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const postWithImagesAndUser = await Post.findOne({
+      where: { id_post: postId },
+      include: [
+        {
+          model: Image,
+          attributes: ["id_image", "image_path"],
+        },
+        {
+          model: User,
+          attributes: ["id_user", "user_name", "user_email", "user_avatar"],
+        },
+      ],
+    });
+
+    if (!postWithImagesAndUser) {
+      return res.status(404).json({ error: true, message: "Post not found" });
+    }
+
+    const comments = await Comment.findAll({
+      where: { post_id: postId },
+      attributes: ["id_comment", "comment_content", "created_at"],
+    });
+
+    const commentsWithVotePoints = await Promise.all(comments.map(async (comment) => {
+      const { id_comment } = comment;
+      const upvotesCount = await Vote.count({ where: { vote_type: "up", comment_id: id_comment } });
+      const downvotesCount = await Vote.count({ where: { vote_type: "down", comment_id: id_comment } });
+      const votePoints = upvotesCount - downvotesCount;
+      return { ...comment.toJSON(), vote_points: votePoints };
+    }));
+    const postWithComments = {
+      ...postWithImagesAndUser.toJSON(),
+      comments: commentsWithVotePoints,
+    };
+
+    res.status(200).json(postWithComments);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

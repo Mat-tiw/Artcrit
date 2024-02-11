@@ -13,7 +13,7 @@ import Image from "next/image";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { red } from "@mui/material/colors";
 interface CommentProps {
-  postId?: string;
+  postId?: number;
 }
 export const CommentsInput: React.FC<CommentProps> = ({ postId }) => {
   const maxFiles = 4;
@@ -46,8 +46,9 @@ export const CommentsInput: React.FC<CommentProps> = ({ postId }) => {
     e.preventDefault();
     try {
       const formData = new FormData();
+      
       formData.append("commentContent", comments);
-        formData.append("postId", 51);
+        formData.append("postId", postId);
       if (userId !== null) {
         formData.append("userId", userId);
       }
@@ -58,7 +59,7 @@ export const CommentsInput: React.FC<CommentProps> = ({ postId }) => {
         `${defaultBackend}/comment/add`,
         formData
       );
-      console.log(upload);
+      location.reload();
     } catch (error) {
       console.log(error);
     }

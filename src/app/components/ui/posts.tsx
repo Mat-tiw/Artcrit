@@ -8,6 +8,12 @@ import { useRouter } from "next/navigation";
 import { Comments } from "./comments";
 import { CommentsInput } from "./commentsInput";
 import Link from "next/link";
+interface Comment {
+  comment_content?:string;
+  created_at?:string;
+  id_comment?:number;
+  vote_points?:number
+}
 interface PostProps {
   title?: string;
   badge?: string;
@@ -19,6 +25,7 @@ interface PostProps {
   showComment?: boolean;
   isInProfile?: boolean;
   post_id?: number;
+  comment?:Array<Comment>
 }
 
 const formattedDate = (rawDate: string | undefined) => {
@@ -48,9 +55,36 @@ const Posts: React.FC<PostProps> = ({
   showComment,
   isInProfile,
   post_id,
+  comment
 }) => {
   const router = useRouter();
 
+  const renderComment = () =>{
+    if(!comment || comment.length === 0){
+      return null;
+    }
+    return(<>
+    {comment.map((comments)=>(
+      <Comments
+      key={comments.id_comment}
+      userName="tester"
+      userPic="http://localhost:3030/static/def.jpg"
+      commentPoint={comments.vote_points}
+      commentContent={comments.comment_content}
+      comment_id={comments.id_comment}
+      />
+      /* <div className="ml-10">
+            <Comments
+              userName="Tester2"
+              userPic="http://localhost:3030/static/def.jpg"
+              commentPoint={2}
+              commentContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+              testImage={false}
+            />
+          </div> */
+    ))}
+    </>)
+  }
   const renderImages = () => {
     if (!images || images.length === 0) {
       return null;
@@ -210,25 +244,9 @@ const Posts: React.FC<PostProps> = ({
       {showComment ? (
         <div className="flex flex-col p-5 z-10">
           <div className="">
-            <CommentsInput />
+            <CommentsInput postId={post_id} />
           </div>
-          <Comments
-            userName="Tester1"
-            userPic="http://localhost:3030/static/3d99072c88image-5.jpg"
-            commentPoint={24}
-            commentContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
-            testImage={true}
-            imgPath="http://localhost:3030/static/cmpreview.png"
-          />
-          <div className="ml-10">
-            <Comments
-              userName="Tester2"
-              userPic="http://localhost:3030/static/def.jpg"
-              commentPoint={2}
-              commentContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
-              testImage={false}
-            />
-          </div>
+          {renderComment()}
         </div>
       ) : (
         ""

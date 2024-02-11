@@ -4,7 +4,8 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ReplyIcon from "@mui/icons-material/Reply";
 import React from "react";
 import Image from "next/image";
-
+import { userId,defaultBackend } from "@/api/api";
+import axios from "axios";
 interface CommentProps {
   userName?: string;
   userPic?: string;
@@ -12,6 +13,7 @@ interface CommentProps {
   commentContent?: string;
   testImage?: boolean;
   imgPath?: string;
+  comment_id?:number
 }
 
 const Comments: React.FC<CommentProps> = ({
@@ -21,18 +23,35 @@ const Comments: React.FC<CommentProps> = ({
   commentContent,
   testImage,
   imgPath,
+  comment_id
 }) => {
+  const handleUpVote = async() =>{
+    try {
+      await axios.post(`${defaultBackend}comments/${comment_id}/upvote`,{userId})
+    } catch (error) {
+      console.error(error)
+    }
+  }
+  const handleDownVote = async()=>{
+    try {
+      await axios.post(`${defaultBackend}comments/${comment_id}/downvote`,{userId})
+    } catch (error) {
+      console.error(error)
+    }
+  }
   return (
     <div className="flex flex-row pt-5 w-full">
       <div className="flex flex-col">
         <ArrowDropUpIcon
           className="hover:text-primary hover:cursor-pointer"
           sx={{ width: 36, height: 36 }}
+          onClick={handleUpVote}
         />
         <p className="self-center">{commentPoint}</p>
         <ArrowDropDownIcon
           className="hover:text-blue-300 hover:cursor-pointer"
           sx={{ width: 36, height: 36 }}
+          onClick={handleDownVote}
         />
       </div>
       <div className="flex flex-col pl-4">
