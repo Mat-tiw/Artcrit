@@ -144,6 +144,16 @@ export const getPostWithComments = async (req, res) => {
     const comments = await Comment.findAll({
       where: { post_id: postId },
       attributes: ["id_comment", "comment_content", "created_at"],
+      include: [
+        {
+          model: Image,
+          attributes: ["id_image", "image_path"],
+        },
+        {
+          model: User,
+          attributes: ["id_user", "user_name", "user_email", "user_avatar"],
+        },
+      ],
     });
 
     const commentsWithVotePoints = await Promise.all(comments.map(async (comment) => {

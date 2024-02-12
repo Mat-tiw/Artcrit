@@ -4,8 +4,6 @@ import Vote from "../model/Vote.js";
 import { fileURLToPath } from "url";
 import multer from "multer";
 import crypto from "crypto";
-import { dirname } from "path";
-import { where } from "sequelize";
 
 function generateRandomString(length) {
   return crypto.randomBytes(length).toString("hex");
@@ -14,7 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadPath =
-      "D:/Desktop/artcrit-alpha/artcrit-early/server/public/comment";
+      "D:/Desktop/artcrit-alpha/artcrit-early/server/public";
     cb(null, uploadPath);
   },
   filename: function (req, file, cb) {
@@ -79,8 +77,7 @@ export const addComment = async (req, res) => {
       return await Image.create({
         image_path: `http://localhost:3030/static/${image.filename}`,
         comment_id: comment.id_comment,
-        user_id: userId,
-        post_id: postId,
+        user_id: userId
       });
     });
     const vote = await Vote.create({
@@ -124,30 +121,24 @@ export const upvoteComment = async (req, res) => {
         post_id: comment.post_id,
         user_id: userId,
       });
-      return res.status(200).json({ message: "Upvoted comment successfully" });
+      return res.status(200).json({ message: "Comment upvoted successfully" });
     }
-    const doVoteUp = vote.vote_type == "up";
-    const doVoteDown = vote.vote_type == "down";
-    if (!doVoteUp || doVoteDown) {
-      await Vote.update(
-        { vote_type: "up" },
-        { where: { comment_id: commentId, user_id: userId } }
-      );
-      return res.status(200).json({ message: "Upvoted comment successfully" });
+    if (vote.vote_type === "up") {
+      await vote.destroy();
+      return res.status(200).json({ message: "Comment upvote removed" });
     }
-    await Vote.update(
-      { vote_type: null },
-      { where: { comment_id: commentId, user_id: userId } }
-    );
-    return res.status(200).json({ message: "Upvoted comment successfully" });
+    await vote.update({ vote_type: "up" });
+    return res.status(200).json({ message: "Comment upvoted successfully" });
   } catch (error) {
-    return res.status(500).json({ error });
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 
 export const downvoteComment = async (req, res) => {
   const { commentId } = req.params;
-  const {userId} = req.body
+  const { userId } = req.body;
   try {
     const comment = await Comment.findByPk(commentId);
     if (!comment) {
@@ -163,23 +154,19 @@ export const downvoteComment = async (req, res) => {
         post_id: comment.post_id,
         user_id: userId,
       });
-      return res.status(200).json({ message: "Upvoted comment successfully" });
+      return res
+        .status(200)
+        .json({ message: "Comment downvoted successfully" });
     }
-    const doVoteUp = vote.vote_type == "up";
-    const doVoteDown = vote.vote_type == "down";
-    if (!doVoteDown || doVoteUp) {
-      await Vote.update(
-        { vote_type: "down" },
-        { where: { comment_id: commentId, user_id: userId } }
-      );
-      return res.status(200).json({ message: "Upvoted comment successfully" });
+    if (vote.vote_type === "down") {
+      await vote.destroy();
+      return res.status(200).json({ message: "Comment downvote removed" });
     }
-    await Vote.update(
-      { vote_type: null },
-      { where: { comment_id: commentId, user_id: userId } }
-    );
-    return res.status(200).json({ message: "Upvoted comment successfully" });
+    await vote.update({ vote_type: "down" });
+    return res.status(200).json({ message: "Comment downvoted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error", error });
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };

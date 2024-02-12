@@ -5,7 +5,7 @@ import axios from "axios";
 import { MiniProfile } from "@/app/components/ui/miniprofile";
 import { Sidebar } from "@/app/components/ui/sidebar";
 import { defaultBackend } from "@/api/api.js";
-interface Image {
+interface Images {
   id_image: number;
   image_path: string;
 }
@@ -16,7 +16,7 @@ interface Post {
   post_badge: string;
   created_at: string;
   user_id: number;
-  ac_images: Image[];
+  ac_images: Images[];
   ac_user: User;
   comments:Comment[];
 }
@@ -32,7 +32,9 @@ interface Comment {
   comment_content?:string;
   created_at?:string;
   id_comment?:number;
-  vote_points?:number
+  vote_points?:number;
+  ac_image:Image[];
+  ac_user:User;
 }
 
 export default function Pages({
@@ -51,17 +53,7 @@ export default function Pages({
 
     fetchPost();
   }, [params.id]);
-  // useEffect(() => {
-  //   const fetchComment = async () => {
-  //     try {
-  //       const response = await axios.post(
-  //         `${defaultBackend}comment/post/${params.id}`
-  //       );
-  //       setComments(response.data);
-  //     } catch (error) {}
-  //   };
-  //   fetchComment();
-  // }, [params.id]);
+  console.log(post?.comments)
   return (
     <div className="bg-primaryBg flex flex-row min-h-screen">
       <div className="text-white basis-[20%] flex flex-col">

@@ -14,8 +14,9 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { red } from "@mui/material/colors";
 interface CommentProps {
   postId?: number;
+  subComment?:boolean;
 }
-export const CommentsInput: React.FC<CommentProps> = ({ postId }) => {
+export const CommentsInput: React.FC<CommentProps> = ({ postId,subComment }) => {
   const maxFiles = 4;
   const [comments, setComments] = useState<string>("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -44,24 +45,35 @@ export const CommentsInput: React.FC<CommentProps> = ({ postId }) => {
   };
   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const formData = new FormData();
-      
-      formData.append("commentContent", comments);
-        formData.append("postId", postId);
-      if (userId !== null) {
-        formData.append("userId", userId);
+    if(!subComment){
+      try {
+        const formData = new FormData();
+  
+        formData.append("commentContent", comments);
+        if (postId != undefined && postId != null) {
+          formData.append("postId", String(postId));
+        }
+        if (userId !== null) {
+          formData.append("userId", userId);
+        }
+        files.forEach((file) => {
+          formData.append("files", file);
+        });
+        const upload = await axios.post(
+          `${defaultBackend}/comment/add`,
+          formData
+        ); 
+        location.reload();
+        return
+      } catch (error) {
+        console.log(error);
       }
-      files.forEach((file) => {
-        formData.append("files", file);
-      });
-      const upload = await axios.post(
-        `${defaultBackend}/comment/add`,
-        formData
-      );
-      location.reload();
-    } catch (error) {
-      console.log(error);
+    }else{
+      try {
+        
+      } catch (error) {
+        
+      }
     }
   };
 
@@ -147,7 +159,10 @@ export const CommentsInput: React.FC<CommentProps> = ({ postId }) => {
                 className="inset-0 cursor-pointer hidden"
               />
               <div className="bg-primary text-primaryBg rounded-xl">
-              <button className="font-montserrart p-2" type="submit">Submit</button></div>
+                <button className="font-montserrart p-2" type="submit">
+                  Submit
+                </button>
+              </div>
             </div>
           </form>
         </div>

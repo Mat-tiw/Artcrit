@@ -4,7 +4,6 @@ import {testFile,uploadPostImage,createPost,getAllPost,getPost,getUserPost,getPo
 import { getAllUserImage } from "../controller/imageController.js";
 import { addComment,uploadCommentArray,testComment,upvoteComment,downvoteComment,getPostComment } from "../controller/commentController.js";
 
-
 const router = express.Router();
 
 

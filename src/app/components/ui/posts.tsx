@@ -9,11 +9,24 @@ import { Comments } from "./comments";
 import { CommentsInput } from "./commentsInput";
 import Link from "next/link";
 interface Comment {
-  comment_content?:string;
-  created_at?:string;
-  id_comment?:number;
-  vote_points?:number
+  comment_content?: string;
+  created_at?: string;
+  id_comment?: number;
+  vote_points?: number;
+  ac_images: Images[];
+  ac_user: User;
 }
+interface User {
+  user_name: string;
+  user_email: string;
+  user_avatar: string;
+  id_user: number;
+}
+interface Images {
+  id_image: number;
+  image_path: string;
+}
+
 interface PostProps {
   title?: string;
   badge?: string;
@@ -25,7 +38,7 @@ interface PostProps {
   showComment?: boolean;
   isInProfile?: boolean;
   post_id?: number;
-  comment?:Array<Comment>
+  comment?: Array<Comment>;
 }
 
 const formattedDate = (rawDate: string | undefined) => {
@@ -55,25 +68,27 @@ const Posts: React.FC<PostProps> = ({
   showComment,
   isInProfile,
   post_id,
-  comment
+  comment,
 }) => {
   const router = useRouter();
-
-  const renderComment = () =>{
-    if(!comment || comment.length === 0){
+  const renderComment = () => {
+    if (!comment || comment.length === 0) {
       return null;
     }
-    return(<>
-    {comment.map((comments)=>(
-      <Comments
-      key={comments.id_comment}
-      userName="tester"
-      userPic="http://localhost:3030/static/def.jpg"
-      commentPoint={comments.vote_points}
-      commentContent={comments.comment_content}
-      comment_id={comments.id_comment}
-      />
-      /* <div className="ml-10">
+    return (
+      <>
+        {comment.map((comments) => (
+          <Comments
+            key={comments.id_comment}
+            userName={comments.ac_user.user_name}
+            userPic={comments.ac_user.user_avatar}
+            commentPoint={comments.vote_points}
+            commentContent={comments.comment_content}
+            comment_id={comments.id_comment}
+            commentImage={comments.ac_images}
+          />
+
+          /* <div className="ml-10">
             <Comments
               userName="Tester2"
               userPic="http://localhost:3030/static/def.jpg"
@@ -82,9 +97,10 @@ const Posts: React.FC<PostProps> = ({
               testImage={false}
             />
           </div> */
-    ))}
-    </>)
-  }
+        ))}
+      </>
+    );
+  };
   const renderImages = () => {
     if (!images || images.length === 0) {
       return null;

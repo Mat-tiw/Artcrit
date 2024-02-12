@@ -53,9 +53,6 @@ interface User {
 }
 export default function Page({ params }: Readonly<{ params: { id: number } }>) {
   const [posts, setPosts] = useState<Post[]>([]);
-  // post = ""
-  // setPosts("a")
-  // post = a
   const [user, setUser] = useState<User>();
   const [image, setImage] = useState<Images[]>([]);
   const [activeTab, setActiveTab] = useState<string>("overview");
@@ -82,7 +79,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
     e.preventDefault();
     try {
       const formData = new FormData();
-      if (editUserName === "") { 
+      if (editUserName === "") {
         const defaultUserName = user?.user_name ?? "";
         formData.append("editUserName", defaultUserName);
       } else {
@@ -101,8 +98,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
         `${defaultBackend}user/update/${userId}`,
         formData
       );
-      console.log(response);
-      console.log("send?");
+      localStorage.setItem('userPic',response.data.user_avatar.user_avatar)
     } catch (error) {
       console.error("Error updating user:", error);
     }
@@ -349,7 +345,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                       <Posts
                         showComment={false}
                         key={post.id_post}
-                        userId={post.id_post}
+                        post_id={post.id_post}
                         title={post.post_title}
                         badge={post.post_badge}
                         userName={post.ac_user.user_name}
@@ -372,7 +368,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                       <Posts
                         showComment={false}
                         key={post.id_post}
-                        userId={post.id_post}
+                        post_id={post.id_post}
                         title={post.post_title}
                         badge={post.post_badge}
                         userName={post.ac_user.user_name}
