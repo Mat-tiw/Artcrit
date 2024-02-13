@@ -1,7 +1,7 @@
 import express from "express";
 import { allUser,addUser,loginUser,findUser,updateUser,updateUserAvatar } from "../controller/userController.js";
 import {testFile,uploadPostImage,createPost,getAllPost,getPost,getUserPost,getPostWithComments} from "../controller/postController.js";
-import { getAllUserImage } from "../controller/imageController.js";
+import { getAllUserImage,testImageSaving,uploadTestImage } from "../controller/imageController.js";
 import { addComment,uploadCommentArray,upvoteComment,downvoteComment,getPostComment,addChildComment,uploadChildCommentArray } from "../controller/commentController.js";
 
 const router = express.Router();
@@ -22,6 +22,7 @@ router.get('/post/user/:id',getUserPost);
 
 
 router.get('/image/:id',getAllUserImage);
+router.post('/image/test',uploadTestImage,testImageSaving)
 
 router.post('/comment/post/:id',getPostComment)
 router.post('/comment/add',uploadCommentArray,addComment);
