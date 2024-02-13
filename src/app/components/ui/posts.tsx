@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Image from "next/image";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Comments } from "./comments";
 import { CommentsInput } from "./commentsInput";
 import Link from "next/link";
+import ImageModal from "./imageModal";
 interface Comment {
   comment_content?: string;
   created_at?: string;
@@ -71,6 +72,41 @@ const Posts: React.FC<PostProps> = ({
   post_id,
   comment,
 }) => {
+  const [openModal, setOpenModal] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handleOpenModal = (
+    index: number,
+    e: React.MouseEvent<HTMLDivElement>
+  ) => {
+    e.preventDefault();
+    setCurrentIndex(index);
+    setOpenModal(true);
+  };
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
+  const handlePrev = () => {
+    setCurrentIndex((prevIndex) =>
+      images === undefined
+        ? prevIndex
+        : prevIndex === 0
+        ? images.length - 1
+        : prevIndex - 1
+    );
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) =>
+      images === undefined
+        ? prevIndex
+        : prevIndex === images.length - 1
+        ? 0
+        : prevIndex + 1
+    );
+  };
+
   const router = useRouter();
   const renderComment = () => {
     if (!comment || comment.length === 0) {
@@ -90,20 +126,20 @@ const Posts: React.FC<PostProps> = ({
               parentId={comments.id_comment}
               post_id={post_id}
             />
-            {comments.commentChild.map((child)=>(
-            <div className="ml-10" key={child.id_comment}>
-              <Comments
-                userName={child.ac_user.user_name}
-                userPic={child.ac_user.user_avatar}
-                commentPoint={child.vote_points}
-                commentContent={child.comment_content}
-                comment_id={child.id_comment}
-                commentImage={child.ac_images}
-                parentId={comments.id_comment}
-                post_id={post_id}
-              />
-            </div>
-           ))}
+            {comments.commentChild.map((child) => (
+              <div className="ml-10" key={child.id_comment}>
+                <Comments
+                  userName={child.ac_user.user_name}
+                  userPic={child.ac_user.user_avatar}
+                  commentPoint={child.vote_points}
+                  commentContent={child.comment_content}
+                  comment_id={child.id_comment}
+                  commentImage={child.ac_images}
+                  parentId={comments.id_comment}
+                  post_id={post_id}
+                />
+              </div>
+            ))}
           </div>
         ))}
       </>
@@ -134,26 +170,30 @@ const Posts: React.FC<PostProps> = ({
     return (
       <div className={`flex flex-wrap justify-center p-5 ${layout}`}>
         {images.map((image, index) => (
-          <Image
-            key={image.id_image}
-            src={image.image_path}
-            width={getLayoutImage(layout, index)}
-            height={getLayoutImage(layout, index)}
-            sizes="(max-width: 1920px) 100vw, (max-height: 1080px) 50vw, 33vw"
-            alt={`Image ${index + 1}`}
-            className={`p-0.5 rounded-${getBorderRadius(
-              layout,
-              index
-            )} hover:object-scale-down hover:rounded-xl ${getObjectPosition(
-              layout,
-              index
-            )} object-cover`}
-          />
+          <div
+            className=""
+            key={index}
+            onClick={(e) => handleOpenModal(index, e)}
+          >
+            <Image
+              src={image.image_path}
+              width={getLayoutImage(layout, index)}
+              height={getLayoutImage(layout, index)}
+              sizes="(max-width: 1920px) 100vw, (max-height: 1080px) 50vw, 33vw"
+              alt={`Image ${index + 1}`}
+              className={`p-0.5 rounded-${getBorderRadius(
+                layout,
+                index
+              )} hover:rounded-xl ${getObjectPosition(
+                layout,
+                index
+              )} object-cover`}
+            />
+          </div>
         ))}
       </div>
     );
   };
-
   const getLayoutImage = (layout: string, index: number) => {
     const layoutImageMap: Record<string, Record<number, number>> = {
       full: { 0: 800 },
@@ -239,6 +279,14 @@ const Posts: React.FC<PostProps> = ({
           <span className="p-0.5 bg-red-600 rounded-sm">{badge}</span>
         </div>
         {renderImages()}
+        <ImageModal
+          open={openModal}
+          onClose={handleCloseModal}
+          images={images}
+          currentIndex={currentIndex}
+          onPrev={handlePrev}
+          onNext={handleNext}
+        />
       </Link>
       <div className="flex flex-row z-10">
         <div className="flex flex-row m-2 p-2 rounded-sm hover:bg-gray-400 hover:cursor-pointer hover:transition-colors ease-in duration-300">
@@ -268,7 +316,7 @@ const Posts: React.FC<PostProps> = ({
       {showComment ? (
         <div className="flex flex-col p-5 z-10">
           <div className="">
-            <CommentsInput postId={post_id} subComment={false}/>
+            <CommentsInput postId={post_id} subComment={false} />
           </div>
           {renderComment()}
         </div>
