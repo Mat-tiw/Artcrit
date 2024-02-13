@@ -163,7 +163,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
         </div>
         <div className="text-white basis-[60%]">
           <div className="flex flex-col">
-            <div className="flex flex-row mt-12 ml-6 w-min-full">
+            <div className="flex flex-row mt-12 ml-6 w-full">
               <Avatar
                 src={user?.user_avatar}
                 sx={{
@@ -172,11 +172,12 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                 }}
               />
               <div className="flex flex-col ml-10 w-full">
-                <div className="flex flex-row gap-x-64">
+                <div className="flex flex-row w-full">
                   <h1 className="font-montserrart font-bold text-4xl">
                     {user?.user_name}
                   </h1>
-                  {updateUserId == params.id ? (
+                 <div className="flex flex-row-reverse w-full">
+                 {updateUserId == params.id ? (
                     <button
                       className="font-montserrart font-semibold border-2 border-primary text-primary rounded-3xl p-1"
                       onClick={handleOpen}
@@ -186,6 +187,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                   ) : (
                     ""
                   )}
+                 </div>
                 </div>
                 <p className="mt-2 min-w-fit">{user?.user_bio}</p>
               </div>

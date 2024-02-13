@@ -33,13 +33,12 @@ interface Comment {
   created_at?:string;
   id_comment?:number;
   vote_points?:number;
-  ac_image:Image[];
+  ac_images:Images[];
   ac_user:User;
+  commentChild:Comment[]
 }
 
-export default function Pages({
-  params,
-}: Readonly<{ params: { id: number } }>) {
+export default function Pages({params,}: Readonly<{ params: { id: number } }>) {
   const [post, setPost] = useState<Post | null>(null);
   useEffect(() => {
     const fetchPost = async () => {
@@ -50,10 +49,8 @@ export default function Pages({
         console.error("Error fetching post:", error);
       }
     };
-
     fetchPost();
   }, [params.id]);
-  console.log(post?.comments)
   return (
     <div className="bg-primaryBg flex flex-row min-h-screen">
       <div className="text-white basis-[20%] flex flex-col">

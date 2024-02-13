@@ -2,7 +2,7 @@ import express from "express";
 import { allUser,addUser,loginUser,findUser,updateUser,updateUserAvatar } from "../controller/userController.js";
 import {testFile,uploadPostImage,createPost,getAllPost,getPost,getUserPost,getPostWithComments} from "../controller/postController.js";
 import { getAllUserImage } from "../controller/imageController.js";
-import { addComment,uploadCommentArray,testComment,upvoteComment,downvoteComment,getPostComment } from "../controller/commentController.js";
+import { addComment,uploadCommentArray,upvoteComment,downvoteComment,getPostComment,addChildComment,uploadChildCommentArray } from "../controller/commentController.js";
 
 const router = express.Router();
 
@@ -25,9 +25,9 @@ router.get('/image/:id',getAllUserImage);
 
 router.post('/comment/post/:id',getPostComment)
 router.post('/comment/add',uploadCommentArray,addComment);
-router.post('/comment/test',testComment)
 router.post('/comments/:commentId/upvote', upvoteComment);
 router.post('/comments/:commentId/downvote', downvoteComment);
+router.post('/comments/add/child/:id',uploadChildCommentArray,addChildComment)
 
 router.post('/post/comment/:id',getPostWithComments)
 

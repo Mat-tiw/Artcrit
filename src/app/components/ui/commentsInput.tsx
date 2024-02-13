@@ -14,9 +14,14 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { red } from "@mui/material/colors";
 interface CommentProps {
   postId?: number;
-  subComment?:boolean;
+  subComment?: boolean;
+  parentId?:number
 }
-export const CommentsInput: React.FC<CommentProps> = ({ postId,subComment }) => {
+export const CommentsInput: React.FC<CommentProps> = ({
+  postId,
+  subComment,
+  parentId
+}) => {
   const maxFiles = 4;
   const [comments, setComments] = useState<string>("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -45,10 +50,10 @@ export const CommentsInput: React.FC<CommentProps> = ({ postId,subComment }) => 
   };
   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if(!subComment){
+    if (subComment===false) {
       try {
         const formData = new FormData();
-  
+
         formData.append("commentContent", comments);
         if (postId != undefined && postId != null) {
           formData.append("postId", String(postId));
@@ -59,20 +64,37 @@ export const CommentsInput: React.FC<CommentProps> = ({ postId,subComment }) => 
         files.forEach((file) => {
           formData.append("files", file);
         });
-        const upload = await axios.post(
+        await axios.post(
           `${defaultBackend}/comment/add`,
           formData
-        ); 
+        );
         location.reload();
-        return
+        return;
       } catch (error) {
         console.log(error);
       }
-    }else{
+    } else {
       try {
-        
+        const formData = new FormData();
+
+        formData.append("commentContent", comments);
+        if (postId != undefined && postId != null) {
+          formData.append("postId", String(postId));
+        }
+        if (userId !== null) {
+          formData.append("userId", userId);
+        }
+        files.forEach((file) => {
+          formData.append("files", file);
+        });
+        await axios.post(
+          `${defaultBackend}/comments/add/child/${parentId}`,
+          formData
+        );
+        location.reload();
+        return;
       } catch (error) {
-        
+        console.log(error)
       }
     }
   };
@@ -107,7 +129,7 @@ export const CommentsInput: React.FC<CommentProps> = ({ postId,subComment }) => 
   return (
     <>
       {login ? (
-        <div className="flex flex-col border-2 border-gray-700 rounded-xl">
+        <div className="flex flex-col border-2 border-gray-700 rounded-xl min-w-full">
           <form onSubmit={handleFormSubmit}>
             <div className="flex flex-row pb-5 m-2">
               <Avatar src={userPic ?? ""} />
@@ -158,10 +180,18 @@ export const CommentsInput: React.FC<CommentProps> = ({ postId,subComment }) => 
                 type="file"
                 className="inset-0 cursor-pointer hidden"
               />
-              <div className="bg-primary text-primaryBg rounded-xl">
-                <button className="font-montserrart p-2" type="submit">
-                  Submit
-                </button>
+              <div className="flex flex-row-reverse w-full">
+                <div className="bg-primary text-primaryBg rounded-xl m-1">
+                  <button
+                    className="font-montserrart font-bold p-1"
+                    type="submit"
+                  >
+                    Submit
+                  </button>
+                </div>
+                <div className="m-1 bg-red-600 font-montserrart font-bold rounded-xl text-white">
+                  <button className="p-1" type="button">cancel</button>
+                </div>
               </div>
             </div>
           </form>

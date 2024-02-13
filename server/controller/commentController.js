@@ -91,16 +91,36 @@ export const addComment = async (req, res) => {
     res.status(500).json({ message: "internal server error", error: error });
   }
 };
-export const testComment = async (req, res) => {
-  const { commentContent } = req.body;
+export const addChildComment = async(req,res)=>{
+  const parentId = req.params.id
+  const { commentContent, userId, postId } = req.body;
+  const files = req.files;
   try {
     const comment = await Comment.create({
       comment_content: commentContent,
+      post_id: postId,
+      user_id: userId,
+      comment_parent:parentId
     });
+    const imagePromises = files.map(async (image) => {
+      return await Image.create({
+        image_path: `http://localhost:3030/static/${image.filename}`,
+        comment_id: comment.id_comment,
+        user_id: userId
+      });
+    });
+    const vote = await Vote.create({
+      comment_id: comment.id_comment,
+      user_id: userId,
+      post_id: postId,
+    });
+    await Promise.all(imagePromises);
+    res.status(200).json({ message: "comment added" });
   } catch (error) {
-    res.status(500);
+    res.status(500).json({ message: "internal server error", error: error });
   }
-};
+}
+export const uploadChildCommentArray = upload.array("files", 4);
 export const uploadCommentArray = upload.array("files", 4);
 
 export const upvoteComment = async (req, res) => {

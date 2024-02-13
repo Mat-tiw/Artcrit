@@ -71,7 +71,14 @@ Comment.hasMany(Vote,{
   foreignKey:'comment_id',
   sourceKey: 'id_comment'
 })
-
+Comment.hasMany(Comment,{
+  foreignKey:'comment_parent',
+  sourceKey: 'id_comment'
+})
+Comment.belongsTo(Comment,{
+  foreignKey:"comment_parent",
+  sourceKey:"id_comment"
+})
 
 Vote.belongsTo(Comment,{
   foreignKey: 'comment_id',

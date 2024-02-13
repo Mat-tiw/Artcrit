@@ -1,12 +1,13 @@
 import Post from "../model/Post.js";
 import Image from "../model/Image.js";
-import Vote from '../model/Vote.js';
-import Comment from '../model/Comment.js';
+import Vote from "../model/Vote.js";
+import Comment from "../model/Comment.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import multer from "multer";
 import crypto from "crypto";
 import User from "../model/User.js";
+import { comment } from "postcss";
 function generateRandomString(length) {
   return crypto.randomBytes(length).toString("hex");
 }
@@ -37,7 +38,7 @@ export const createPost = async (req, res) => {
       return await Image.create({
         image_path: `http://localhost:3030/static/${image.filename}`,
         post_id: post.id_post,
-        user_id:userId
+        user_id: userId,
       });
     });
     await Promise.all(imagePromises);
@@ -91,7 +92,7 @@ export const getPost = async (req, res) => {
       ],
     });
     if (!postWithImagesAndUser) {
-      return res.status(401).json({ error:true,message:"no post found" });
+      return res.status(401).json({ error: true, message: "no post found" });
     }
     res.json(postWithImagesAndUser);
   } catch (error) {
@@ -114,7 +115,8 @@ export const getUserPost = async (req, res) => {
         },
       ],
     });
-    if(!allUserPost) return res.status(401).json({ error:true,message:"no post found" })
+    if (!allUserPost)
+      return res.status(401).json({ error: true, message: "no post found" });
     res.json(allUserPost);
   } catch (error) {}
 };
@@ -142,8 +144,8 @@ export const getPostWithComments = async (req, res) => {
     }
 
     const comments = await Comment.findAll({
-      where: { post_id: postId },
-      attributes: ["id_comment", "comment_content", "created_at"],
+      where: { post_id: postId, comment_parent: null },
+      attributes: ["id_comment", "comment_content", "created_at","post_id"],
       include: [
         {
           model: Image,
@@ -156,16 +158,58 @@ export const getPostWithComments = async (req, res) => {
       ],
     });
 
-    const commentsWithVotePoints = await Promise.all(comments.map(async (comment) => {
-      const { id_comment } = comment;
-      const upvotesCount = await Vote.count({ where: { vote_type: "up", comment_id: id_comment } });
-      const downvotesCount = await Vote.count({ where: { vote_type: "down", comment_id: id_comment } });
-      const votePoints = upvotesCount - downvotesCount;
-      return { ...comment.toJSON(), vote_points: votePoints };
-    }));
+    const commentsWithChildren = await Promise.all(
+      comments.map(async (comment) => {
+        const { id_comment } = comment;
+
+        const upvotesCount = await Vote.count({
+          where: { vote_type: "up", comment_id: id_comment },
+        });
+        const downvotesCount = await Vote.count({
+          where: { vote_type: "down", comment_id: id_comment },
+        });
+        const votePoints = upvotesCount - downvotesCount;
+
+        const commentChild = await Comment.findAll({
+          where: { post_id: postId, comment_parent: id_comment },
+          attributes: ["id_comment", "comment_content", "created_at","post_id"],
+          include: [
+            {
+              model: Image,
+              attributes: ["id_image", "image_path"],
+            },
+            {
+              model: User,
+              attributes: ["id_user", "user_name", "user_email", "user_avatar"],
+            },
+          ],
+        });
+
+        const commentChildWithVotePoints = await Promise.all(
+          commentChild.map(async (child) => {
+            const { id_comment: childId } = child;
+            const childUpvotesCount = await Vote.count({
+              where: { vote_type: "up", comment_id: childId },
+            });
+            const childDownvotesCount = await Vote.count({
+              where: { vote_type: "down", comment_id: childId },
+            });
+            const childVotePoints = childUpvotesCount - childDownvotesCount;
+            return { ...child.toJSON(), vote_points: childVotePoints };
+          })
+        );
+
+        return {
+          ...comment.toJSON(),
+          vote_points: votePoints,
+          commentChild: commentChildWithVotePoints,
+        };
+      })
+    );
+
     const postWithComments = {
       ...postWithImagesAndUser.toJSON(),
-      comments: commentsWithVotePoints,
+      comments: commentsWithChildren,
     };
 
     res.status(200).json(postWithComments);

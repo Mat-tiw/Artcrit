@@ -15,6 +15,7 @@ interface Comment {
   vote_points?: number;
   ac_images: Images[];
   ac_user: User;
+  commentChild: Comment[];
 }
 interface User {
   user_name: string;
@@ -38,7 +39,7 @@ interface PostProps {
   showComment?: boolean;
   isInProfile?: boolean;
   post_id?: number;
-  comment?: Array<Comment>;
+  comment?: Comment[];
 }
 
 const formattedDate = (rawDate: string | undefined) => {
@@ -78,25 +79,32 @@ const Posts: React.FC<PostProps> = ({
     return (
       <>
         {comment.map((comments) => (
-          <Comments
-            key={comments.id_comment}
-            userName={comments.ac_user.user_name}
-            userPic={comments.ac_user.user_avatar}
-            commentPoint={comments.vote_points}
-            commentContent={comments.comment_content}
-            comment_id={comments.id_comment}
-            commentImage={comments.ac_images}
-          />
-
-          /* <div className="ml-10">
+          <div className="" key={comments.id_comment}>
             <Comments
-              userName="Tester2"
-              userPic="http://localhost:3030/static/def.jpg"
-              commentPoint={2}
-              commentContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
-              testImage={false}
+              userName={comments.ac_user.user_name}
+              userPic={comments.ac_user.user_avatar}
+              commentPoint={comments.vote_points}
+              commentContent={comments.comment_content}
+              comment_id={comments.id_comment}
+              commentImage={comments.ac_images}
+              parentId={comments.id_comment}
+              post_id={post_id}
             />
-          </div> */
+            {comments.commentChild.map((child)=>(
+            <div className="ml-10" key={child.id_comment}>
+              <Comments
+                userName={child.ac_user.user_name}
+                userPic={child.ac_user.user_avatar}
+                commentPoint={child.vote_points}
+                commentContent={child.comment_content}
+                comment_id={child.id_comment}
+                commentImage={child.ac_images}
+                parentId={comments.id_comment}
+                post_id={post_id}
+              />
+            </div>
+           ))}
+          </div>
         ))}
       </>
     );
@@ -260,7 +268,7 @@ const Posts: React.FC<PostProps> = ({
       {showComment ? (
         <div className="flex flex-col p-5 z-10">
           <div className="">
-            <CommentsInput postId={post_id} />
+            <CommentsInput postId={post_id} subComment={false}/>
           </div>
           {renderComment()}
         </div>
