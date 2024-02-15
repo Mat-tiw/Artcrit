@@ -4,6 +4,7 @@ import React, {
   useRef,
   useCallback,
   FormEvent,
+  useEffect,
 } from "react";
 import { Avatar } from "@mui/material";
 import { defaultBackend, login, userId, userPic } from "../../../api/api.js";
@@ -16,17 +17,26 @@ interface CommentProps {
   postId?: number;
   subComment?: boolean;
   parentId?:number
+  drawnImageEdited?:File
 }
 export const CommentsInput: React.FC<CommentProps> = ({
   postId,
   subComment,
-  parentId
+  parentId,
+  drawnImageEdited
 }) => {
   const maxFiles = 4;
   const [comments, setComments] = useState<string>("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<(string | ArrayBuffer | null)[]>([]);
+
+  useEffect(() => {
+    if (drawnImageEdited) {
+      setFiles(prevFiles => [...prevFiles, drawnImageEdited]);
+      setPreviews(prevPreviews => [...prevPreviews, URL.createObjectURL(drawnImageEdited)]);
+    }
+  }, [drawnImageEdited]);
 
   const handleTextareaChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setComments(e.target.value);

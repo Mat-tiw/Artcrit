@@ -63,12 +63,12 @@ const DrawingComponent: React.FC<DrawingProps> = ({ imageSrc, onClose }) => {
     const context = canvas.getContext('2d')!;
 
     const img = new Image();
+    img.src = imageSrc;
     img.onload = () => {
       canvas.width = img.width;
       canvas.height = img.height;
       context.drawImage(img, 0, 0);
     };
-    img.src = imageSrc;
     img.setAttribute('crossorigin', 'anonymous');
     let isDrawing = false;
     let lastX = 0;

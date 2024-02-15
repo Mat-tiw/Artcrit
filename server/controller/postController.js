@@ -145,7 +145,7 @@ export const getPostWithComments = async (req, res) => {
 
     const comments = await Comment.findAll({
       where: { post_id: postId, comment_parent: null },
-      attributes: ["id_comment", "comment_content", "created_at","post_id"],
+      attributes: ["id_comment", "comment_content", "created_at","post_id","vote_points"],
       include: [
         {
           model: Image,
@@ -162,17 +162,9 @@ export const getPostWithComments = async (req, res) => {
       comments.map(async (comment) => {
         const { id_comment } = comment;
 
-        const upvotesCount = await Vote.count({
-          where: { vote_type: "up", comment_id: id_comment },
-        });
-        const downvotesCount = await Vote.count({
-          where: { vote_type: "down", comment_id: id_comment },
-        });
-        const votePoints = upvotesCount - downvotesCount;
-
         const commentChild = await Comment.findAll({
           where: { post_id: postId, comment_parent: id_comment },
-          attributes: ["id_comment", "comment_content", "created_at","post_id"],
+          attributes: ["id_comment", "comment_content", "created_at","post_id","vote_points"],
           include: [
             {
               model: Image,
@@ -185,24 +177,9 @@ export const getPostWithComments = async (req, res) => {
           ],
         });
 
-        const commentChildWithVotePoints = await Promise.all(
-          commentChild.map(async (child) => {
-            const { id_comment: childId } = child;
-            const childUpvotesCount = await Vote.count({
-              where: { vote_type: "up", comment_id: childId },
-            });
-            const childDownvotesCount = await Vote.count({
-              where: { vote_type: "down", comment_id: childId },
-            });
-            const childVotePoints = childUpvotesCount - childDownvotesCount;
-            return { ...child.toJSON(), vote_points: childVotePoints };
-          })
-        );
-
         return {
           ...comment.toJSON(),
-          vote_points: votePoints,
-          commentChild: commentChildWithVotePoints,
+          commentChild: commentChild,
         };
       })
     );

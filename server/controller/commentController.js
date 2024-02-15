@@ -148,6 +148,14 @@ export const upvoteComment = async (req, res) => {
       return res.status(200).json({ message: "Comment upvote removed" });
     }
     await vote.update({ vote_type: "up" });
+    const upvotesCount = await Vote.count({
+      where: { vote_type: "up", comment_id: commentId },
+    });
+    const downvotesCount = await Vote.count({
+      where: { vote_type: "down", comment_id: commentId },
+    });
+    const votePoints = upvotesCount - downvotesCount;
+    await Comment.update({vote_points:votePoints},{where:{comment_id:commentId}},)
     return res.status(200).json({ message: "Comment upvoted successfully" });
   } catch (error) {
     return res
@@ -183,6 +191,14 @@ export const downvoteComment = async (req, res) => {
       return res.status(200).json({ message: "Comment downvote removed" });
     }
     await vote.update({ vote_type: "down" });
+    const upvotesCount = await Vote.count({
+      where: { vote_type: "up", comment_id: commentId },
+    });
+    const downvotesCount = await Vote.count({
+      where: { vote_type: "down", comment_id: commentId },
+    });
+    const votePoints = upvotesCount - downvotesCount;
+    await Comment.update({vote_points:votePoints},{where:{comment_id:commentId}},)
     return res.status(200).json({ message: "Comment downvoted successfully" });
   } catch (error) {
     return res

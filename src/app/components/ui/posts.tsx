@@ -74,6 +74,7 @@ const Posts: React.FC<PostProps> = ({
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [drawnImageEdited, setDrawnImageEdited] = useState<File | null>(null);
 
   const handleOpenModal = (
     index: number,
@@ -105,6 +106,10 @@ const Posts: React.FC<PostProps> = ({
         ? 0
         : prevIndex + 1
     );
+  };
+  const handleSave = (file: File) => {
+    setDrawnImageEdited(file);
+    console.log(drawnImageEdited)
   };
 
   const router = useRouter();
@@ -286,6 +291,7 @@ const Posts: React.FC<PostProps> = ({
           currentIndex={currentIndex}
           onPrev={handlePrev}
           onNext={handleNext}
+          onSave={handleSave}
         />
       </Link>
       <div className="flex flex-row z-10">
@@ -316,7 +322,7 @@ const Posts: React.FC<PostProps> = ({
       {showComment ? (
         <div className="flex flex-col p-5 z-10">
           <div className="">
-            <CommentsInput postId={post_id} subComment={false} />
+            <CommentsInput postId={post_id} subComment={false} drawnImageEdited={drawnImageEdited??undefined} />
           </div>
           {renderComment()}
         </div>
