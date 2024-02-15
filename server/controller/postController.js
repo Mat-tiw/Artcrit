@@ -51,7 +51,6 @@ export const createPost = async (req, res) => {
 
 export const testFile = (req, res) => {
   const files = req.body.files;
-  console.log(files);
 };
 export const getAllPost = async (req, res) => {
   try {
@@ -113,7 +112,7 @@ export const getUserPost = async (req, res) => {
           model: User,
           attributes: ["id_user", "user_name", "user_email", "user_avatar"],
         },
-      ],
+      ],order: [["created_at", "DESC"]]
     });
     if (!allUserPost)
       return res.status(401).json({ error: true, message: "no post found" });
@@ -121,6 +120,7 @@ export const getUserPost = async (req, res) => {
   } catch (error) {}
 };
 export const uploadPostImage = upload.array("files", 4);
+
 
 export const getPostWithComments = async (req, res) => {
   try {
@@ -145,18 +145,19 @@ export const getPostWithComments = async (req, res) => {
 
     const comments = await Comment.findAll({
       where: { post_id: postId, comment_parent: null },
-      attributes: ["id_comment", "comment_content", "created_at","post_id","vote_points"],
+      attributes: ["id_comment", "comment_content", "created_at", "post_id", "vote_points"],
       include: [
-        {
-          model: Image,
-          attributes: ["id_image", "image_path"],
-        },
-        {
-          model: User,
-          attributes: ["id_user", "user_name", "user_email", "user_avatar"],
-        },
+          {
+              model: Image,
+              attributes: ["id_image", "image_path"],
+          },
+          {
+              model: User,
+              attributes: ["id_user", "user_name", "user_email", "user_avatar"],
+          },
       ],
-    });
+      order: [["vote_points", "DESC"]]
+  });
 
     const commentsWithChildren = await Promise.all(
       comments.map(async (comment) => {
@@ -175,6 +176,7 @@ export const getPostWithComments = async (req, res) => {
               attributes: ["id_user", "user_name", "user_email", "user_avatar"],
             },
           ],
+          order: [["vote_points", "DESC"]]
         });
 
         return {
@@ -194,3 +196,15 @@ export const getPostWithComments = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+export const removePost = async(req,res)=>{
+  const postId = req.params.id
+  try {
+    const post = await Post.findByPk(postId)
+    if(!post){
+      return res.status(500).json({message:"No post"})
+    }
+    post.destroy();
+  } catch (error) {
+    res.status(500).json({error:error})
+  }
+}

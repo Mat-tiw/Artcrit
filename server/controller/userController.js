@@ -5,6 +5,8 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import crypto from "crypto";
 import multer from "multer";
+import Post from "../model/Post.js";
+import Comment from "../model/Comment.js";
 
 function generateRandomString(length) {
   return crypto.randomBytes(length).toString("hex");
@@ -141,5 +143,28 @@ export const loginUser = async (req, res) => {
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+export const calculateUserPoint = async (userId) => {
+  try {
+    console.log(userId)
+    const postPoint = await Post.sum("total_like", {
+      where: { user_id: userId },
+    });
+    const commentPoints = await Comment.sum("vote_points", {
+      where: {
+        user_id: userId,
+      },
+    });
+    const total = postPoint + commentPoints;
+    const user = await User.findByPk(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    user.user_points = total;
+    await user.save();
+    return total;
+  } catch (error) {
+    throw new Error("Failed to calculate user points: " + error.message);
   }
 };

@@ -14,6 +14,7 @@ interface ImageModalProps {
   onPrev: () => void;
   onNext: () => void;
   onSave: (file: File) => void;
+  editable: boolean;
 }
 
 const ImageModal: React.FC<ImageModalProps> = ({
@@ -23,7 +24,8 @@ const ImageModal: React.FC<ImageModalProps> = ({
   currentIndex,
   onPrev,
   onNext,
-  onSave
+  onSave,
+  editable,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -62,7 +64,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
     }
   }, [drawnImageEdited, isSaving]);
 
-  const handleSave  = () => {
+  const handleSave = () => {
     setIsSaving(true);
     saveImage();
     handleBackdropClick();
@@ -202,24 +204,30 @@ const ImageModal: React.FC<ImageModalProps> = ({
               <Close />
             </div>
           </button>
-          {!isEditing ? (
-            <button
-              className="mt-10 mr-10 text-white hover:bg-opacity-50 hover:bg-slate-200 hover:rounded-3xl"
-              onClick={handleEditClick}
-            >
-              <div className="p-1">
-                <EditIcon />
-              </div>
-            </button>
+          {editable ? (
+            <div>
+              {!isEditing ? (
+                <button
+                  className="mt-10 mr-10 text-white hover:bg-opacity-50 hover:bg-slate-200 hover:rounded-3xl"
+                  onClick={handleEditClick}
+                >
+                  <div className="p-1">
+                    <EditIcon />
+                  </div>
+                </button>
+              ) : (
+                <button
+                  className="mt-10 mr-10 text-white hover:bg-opacity-50 hover:bg-slate-200 hover:rounded-3xl"
+                  onClick={handleSave}
+                >
+                  <div className="p-1">
+                    <SaveIcon />
+                  </div>
+                </button>
+              )}
+            </div>
           ) : (
-            <button
-              className="mt-10 mr-10 text-white hover:bg-opacity-50 hover:bg-slate-200 hover:rounded-3xl"
-              onClick={handleSave}
-            >
-              <div className="p-1">
-                <SaveIcon />
-              </div>
-            </button>
+            ""
           )}
         </div>
         {!isEditing && (

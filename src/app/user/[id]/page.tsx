@@ -16,7 +16,8 @@ import Image from "next/image";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import EditIcon from "@mui/icons-material/Edit";
-
+import ImageModal from "@/app/components/ui/imageModal";
+import { Comments } from "@/app/components/ui/comments";
 const style = {
   position: "absolute",
   top: "50%",
@@ -29,6 +30,16 @@ const style = {
   color: "white",
   borderRadius: "0.75rem",
 };
+
+interface Comment {
+  comment_content?: string;
+  created_at?: string;
+  id_comment?: number;
+  vote_points?: number;
+  ac_images: Images[];
+  ac_user: User;
+  commentChild: Comment[];
+}
 
 interface Images {
   id_image: number;
@@ -53,17 +64,68 @@ interface User {
 }
 export default function Page({ params }: Readonly<{ params: { id: number } }>) {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [postLike, setPostLike] = useState<Post[]>([]);
   const [user, setUser] = useState<User>();
   const [image, setImage] = useState<Images[]>([]);
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [noPost, setNoPost] = useState(true);
   const [editUserName, setEditUserName] = useState<string>("");
-
+  const [comment, setComments] = useState<Comment[]>([]);
   const [editBio, setEditBio] = useState<string>("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [openModal, setOpenModal] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [drawnImageEdited, setDrawnImageEdited] = useState<File | null>(null);
+
+  useEffect(() => {
+    const fetchComment = async () => {
+      try {
+        const res = await axios.post(
+          `${defaultBackend}comments/user/find/${params.id}`
+        );
+        setComments(res.data);
+        console.log(res.data)
+      } catch (error) {}
+    };
+    fetchComment()
+  }, [params.id]);
+
+  const handleOpenModal = (
+    index: number,
+    e: React.MouseEvent<MouseEvent>
+  ) => {
+    e.preventDefault();
+    setCurrentIndex(index);
+    setOpenModal(true);
+  };
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+  const handlePrev = () => {
+    setCurrentIndex((prevIndex) =>
+      image === undefined
+        ? prevIndex
+        : prevIndex === 0
+        ? image.length - 1
+        : prevIndex - 1
+    );
+  };
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) =>
+      image === undefined
+        ? prevIndex
+        : prevIndex === image.length - 1
+        ? 0
+        : prevIndex + 1
+    );
+  };
+  const handleSave = (file: File) => {
+    setDrawnImageEdited(file);
+  };
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
@@ -98,7 +160,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
         `${defaultBackend}user/update/${userId}`,
         formData
       );
-      localStorage.setItem('userPic',response.data.user_avatar.user_avatar)
+      localStorage.setItem("userPic", response.data.user_avatar.user_avatar);
     } catch (error) {
       console.error("Error updating user:", error);
     }
@@ -119,6 +181,19 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
   const [isHovered, setIsHovered] = useState(false);
 
   const updateUserId = userId !== null ? parseInt(userId) : null;
+  useEffect(() => {
+    const fetchLikedPost = async () => {
+      try {
+        const res = await axios.post(
+          `${defaultBackend}vote/get/post/${params.id}`
+        );
+        setPostLike(res.data)
+      } catch (error) {
+        console.log("Error fetch post:", error);
+      }
+    };
+    fetchLikedPost();
+  }, [params.id]);
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -176,18 +251,18 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                   <h1 className="font-montserrart font-bold text-4xl">
                     {user?.user_name}
                   </h1>
-                 <div className="flex flex-row-reverse w-full">
-                 {updateUserId == params.id ? (
-                    <button
-                      className="font-montserrart font-semibold border-2 border-primary text-primary rounded-3xl p-1"
-                      onClick={handleOpen}
-                    >
-                      Edit profile
-                    </button>
-                  ) : (
-                    ""
-                  )}
-                 </div>
+                  <div className="flex flex-row-reverse w-full">
+                    {updateUserId == params.id ? (
+                      <button
+                        className="font-montserrart font-semibold border-2 border-primary text-primary rounded-3xl p-1"
+                        onClick={handleOpen}
+                      >
+                        Edit profile
+                      </button>
+                    ) : (
+                      ""
+                    )}
+                  </div>
                 </div>
                 <p className="mt-2 min-w-fit">{user?.user_bio}</p>
               </div>
@@ -354,6 +429,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                         date={post.created_at}
                         images={post.ac_images}
                         userPic={post.ac_user.user_avatar}
+                        toOpenModal={false}
                       />
                     ))
                   )}
@@ -378,12 +454,38 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                         images={post.ac_images}
                         userPic={post.ac_user.user_avatar}
                         isInProfile={true}
+                        toOpenModal={false}
                       />
                     ))
                   )}
                 </div>
               )}
-              {activeTab === "comments" && <div className=""></div>}
+              {activeTab === "comments" && (
+                <div className="">
+                  {comment.length === 0 ? (
+                    <div>
+                      <h1>this user had no comment</h1>
+                    </div>
+                  ) : (
+                    <div>
+                      {comment.map((comments) => (
+                        <div className="" key={comments.id_comment}>
+                          <Comments
+                            userName={comments.ac_user.user_name}
+                            userPic={comments.ac_user.user_avatar}
+                            commentPoint={comments.vote_points}
+                            commentContent={comments.comment_content}
+                            comment_id={comments.id_comment}
+                            commentImage={comments.ac_images}
+                            parentId={comments.id_comment}
+                            replyable={false}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
               {activeTab === "media" && (
                 <div className="">
                   {noPost ? (
@@ -392,21 +494,60 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                     </div>
                   ) : (
                     <div className="flex flex-row flex-wrap m-2">
-                      {image.map((images) => (
-                        <Image
-                          className="object-cover m-2"
-                          key={images.id_image}
-                          src={images.image_path}
-                          width={500}
-                          height={500}
-                          alt="placeholder"
+                      {image.map((images, index) => (
+                        <div className="" key={images.id_image}>
+                          <button onClick={(e) => handleOpenModal(index, e)}>
+                            <Image
+                              className="object-cover m-2"
+                              src={images.image_path}
+                              width={500}
+                              height={500}
+                              alt="placeholder"
+                            />
+                          </button>
+                        </div>
+                      ))}
+                      <ImageModal
+                        open={openModal}
+                        onClose={handleCloseModal}
+                        images={image}
+                        currentIndex={currentIndex}
+                        onPrev={handlePrev}
+                        onNext={handleNext}
+                        editable={false}
+                        onSave={handleSave}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+              {activeTab === "like" && (
+                <div className="">
+                  {postLike.length === 0 ? (
+                    <div>
+                      <h1>User have no liked post</h1>
+                    </div>
+                  ) : (
+                    <div className="">
+                      {postLike.map((post) => (
+                        <Posts
+                          showComment={false}
+                          key={post.id_post}
+                          post_id={post.id_post}
+                          title={post.post_title}
+                          badge={post.post_badge}
+                          userName={post.ac_user.user_name}
+                          date={post.created_at}
+                          images={post.ac_images}
+                          userPic={post.ac_user.user_avatar}
+                          isInProfile={true}
+                          toOpenModal={false}
                         />
                       ))}
                     </div>
                   )}
                 </div>
               )}
-              {activeTab === "like" && <div className=""></div>}
             </>
           )}
         </div>

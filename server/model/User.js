@@ -36,6 +36,9 @@ const User = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    user_points:{
+      type:DataTypes.INTEGER
+    }
   },
   {
     Sequelize,

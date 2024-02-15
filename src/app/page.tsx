@@ -95,7 +95,7 @@ export default function Home() {
                 date={post.created_at}
                 images={post.ac_images}
                 userPic={post.ac_user.user_avatar}
-                userId={post.ac_user.id_user}
+                user_id={post.ac_user.id_user}
                 toOpenModal={false}
               />
             ))

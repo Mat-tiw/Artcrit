@@ -57,8 +57,6 @@ const MiniProfile: React.FC = () => {
         user: user,
         pwd: pwd,
       });
-
-      console.log(res.data);
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userName", res.data.userName);
       localStorage.setItem("userPic", res.data.userPic);
@@ -75,7 +73,6 @@ const MiniProfile: React.FC = () => {
         user: user,
         pwd: pwd,
       });
-      console.log(res);
       setOpenRegi(false);
     } catch (error) {
       console.error("Error submitting data:", error);

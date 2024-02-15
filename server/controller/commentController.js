@@ -1,10 +1,11 @@
 import Comment from "../model/Comment.js";
 import Image from "../model/Image.js";
 import Vote from "../model/Vote.js";
+import User from "../model/User.js";
 import { fileURLToPath } from "url";
 import multer from "multer";
 import crypto from "crypto";
-
+import { calculateUserPoint } from "./userController.js";
 function generateRandomString(length) {
   return crypto.randomBytes(length).toString("hex");
 }
@@ -58,7 +59,17 @@ export const getPostComment = async (req, res) => {
 export const getUserComment = async (req, res) => {
   try {
     const id = req.params.id;
-    const comment = await Comment.findAll({ where: { user_id: id } });
+    const comment = await Comment.findAll({ where: { user_id: id },
+      include: [
+        {
+          model: Image,
+          attributes: ["id_image", "image_path"],
+        },
+        {
+          model: User,
+          attributes: ["id_user", "user_name", "user_email", "user_avatar"],
+        },
+      ], });
     res.status(200).json(comment);
   } catch (error) {
     res.status(500).json({ error: error });
@@ -125,29 +136,30 @@ export const uploadCommentArray = upload.array("files", 4);
 
 export const upvoteComment = async (req, res) => {
   const { commentId } = req.params;
-  const { userId } = req.body;
+  const { userId, op } = req.body;
   try {
     const comment = await Comment.findByPk(commentId);
     if (!comment) {
       return res.status(404).json({ message: "Comment not found" });
     }
-    const vote = await Vote.findOne({
+    let vote = await Vote.findOne({
       where: { comment_id: commentId, user_id: userId },
     });
     if (!vote) {
-      await Vote.create({
+      vote = await Vote.create({
         comment_id: commentId,
         vote_type: "up",
         post_id: comment.post_id,
         user_id: userId,
       });
-      return res.status(200).json({ message: "Comment upvoted successfully" });
+    } else {
+      if (vote.vote_type === "up") {
+        await vote.destroy();
+        vote = null;
+      } else {
+        await vote.update({ vote_type: "up" });
+      }
     }
-    if (vote.vote_type === "up") {
-      await vote.destroy();
-      return res.status(200).json({ message: "Comment upvote removed" });
-    }
-    await vote.update({ vote_type: "up" });
     const upvotesCount = await Vote.count({
       where: { vote_type: "up", comment_id: commentId },
     });
@@ -155,18 +167,18 @@ export const upvoteComment = async (req, res) => {
       where: { vote_type: "down", comment_id: commentId },
     });
     const votePoints = upvotesCount - downvotesCount;
-    await Comment.update({vote_points:votePoints},{where:{id_comment:commentId}},)
+    await Comment.update({ vote_points: votePoints }, { where: { id_comment: commentId } });
+    await calculateUserPoint(op);
+    
     return res.status(200).json({ message: "Comment upvoted successfully" });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Internal server error", error: error.message });
+    return res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
 
 export const downvoteComment = async (req, res) => {
   const { commentId } = req.params;
-  const { userId } = req.body;
+  const { userId,op } = req.body;
   try {
     const comment = await Comment.findByPk(commentId);
     if (!comment) {
@@ -182,13 +194,9 @@ export const downvoteComment = async (req, res) => {
         post_id: comment.post_id,
         user_id: userId,
       });
-      return res
-        .status(200)
-        .json({ message: "Comment downvoted successfully" });
     }
     if (vote.vote_type === "down") {
       await vote.destroy();
-      return res.status(200).json({ message: "Comment downvote removed" });
     }
     await vote.update({ vote_type: "down" });
     const upvotesCount = await Vote.count({
@@ -199,6 +207,7 @@ export const downvoteComment = async (req, res) => {
     });
     const votePoints = upvotesCount - downvotesCount;
     await Comment.update({vote_points:votePoints},{where:{id_comment:commentId}},)
+    await calculateUserPoint(op)
     return res.status(200).json({ message: "Comment downvoted successfully" });
   } catch (error) {
     return res

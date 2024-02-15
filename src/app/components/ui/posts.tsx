@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Avatar from "@mui/material/Avatar";
 import Image from "next/image";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
@@ -9,6 +9,10 @@ import { Comments } from "./comments";
 import { CommentsInput } from "./commentsInput";
 import Link from "next/link";
 import ImageModal from "./imageModal";
+import axios from "axios";
+import { defaultBackend, userId } from "@/api/api";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import DeleteIcon from "@mui/icons-material/Delete";
 interface Comment {
   comment_content?: string;
   created_at?: string;
@@ -36,12 +40,12 @@ interface PostProps {
   date?: string;
   images?: Array<{ id_image: number; image_path: string }>;
   userPic?: string;
-  userId?: number;
+  user_id?: number;
   showComment?: boolean;
   isInProfile?: boolean;
   post_id?: number;
   comment?: Comment[];
-  toOpenModal: boolean
+  toOpenModal: boolean;
 }
 
 const formattedDate = (rawDate: string | undefined) => {
@@ -60,6 +64,30 @@ const formattedDate = (rawDate: string | undefined) => {
     ? new Intl.DateTimeFormat("en-US", options).format(dateObject)
     : "";
 };
+
+const useClickOutside = (handler: () => void) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        ref.current &&
+        event.target instanceof Node &&
+        !ref.current.contains(event.target as Node)
+      ) {
+        handler();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [handler]);
+
+  return ref;
+};
+
 const Posts: React.FC<PostProps> = ({
   title,
   badge,
@@ -67,28 +95,35 @@ const Posts: React.FC<PostProps> = ({
   date,
   images,
   userPic,
-  userId,
+  user_id,
   showComment,
   isInProfile,
   post_id,
   comment,
-  toOpenModal
+  toOpenModal,
 }) => {
-  const [openModal, setOpenModal] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [drawnImageEdited, setDrawnImageEdited] = useState<File | null>(null);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+
+  const handleLiked = async () => {
+    await axios.post(`${defaultBackend}vote/like/${userId}`, {
+      postId: post_id,op:user_id
+    });
+  };
 
   const handleOpenModal = (
     index: number,
     e: React.MouseEvent<HTMLDivElement>,
-    toOpenModal:boolean
+    toOpenModal: boolean
   ) => {
     e.preventDefault();
-    if(toOpenModal){
+    if (toOpenModal) {
       setCurrentIndex(index);
       setOpenModal(true);
-    }else{
-      router.push(`/post/${post_id}`)
+    } else {
+      router.push(`/post/${post_id}`);
     }
   };
   const handleCloseModal = () => {
@@ -116,7 +151,6 @@ const Posts: React.FC<PostProps> = ({
   };
   const handleSave = (file: File) => {
     setDrawnImageEdited(file);
-    console.log(drawnImageEdited)
   };
 
   const router = useRouter();
@@ -137,6 +171,7 @@ const Posts: React.FC<PostProps> = ({
               commentImage={comments.ac_images}
               parentId={comments.id_comment}
               post_id={post_id}
+              op={user_id}
             />
             {comments.commentChild.map((child) => (
               <div className="ml-10" key={child.id_comment}>
@@ -149,6 +184,7 @@ const Posts: React.FC<PostProps> = ({
                   commentImage={child.ac_images}
                   parentId={comments.id_comment}
                   post_id={post_id}
+                  op={user_id}
                 />
               </div>
             ))}
@@ -185,7 +221,7 @@ const Posts: React.FC<PostProps> = ({
           <div
             className=""
             key={index}
-            onClick={(e) => handleOpenModal(index, e,toOpenModal)}
+            onClick={(e) => handleOpenModal(index, e, toOpenModal)}
           >
             <Image
               src={image.image_path}
@@ -246,7 +282,26 @@ const Posts: React.FC<PostProps> = ({
     };
     return objectPositionMap[layout]?.[index] || "";
   };
+  const handleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+  const menuRef = useClickOutside(closeMenu);
 
+  const handleRemove = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    try {
+      setTimeout(() => {
+        window.location.reload();
+    }, 100);
+        await fetch(`${defaultBackend}post/remove/${post_id}`,{method:'POST'})
+    } catch (error) {
+        console.log("Error occurred:", error);
+    }
+};
+  const isOwner = Number(userId) === user_id;
   return (
     <div className="m-5 flex flex-col bg-secondary rounded-xl text-white -z-10">
       <div className="p-5 flex z-10">
@@ -261,7 +316,7 @@ const Posts: React.FC<PostProps> = ({
           />
         ) : (
           <Link
-            href={`/user/${userId}`}
+            href={`/user/${user_id}`}
             className="z-10 hover:-translate-y-0.5 hover:translate-x-0.5"
           >
             <Avatar
@@ -274,13 +329,38 @@ const Posts: React.FC<PostProps> = ({
             />
           </Link>
         )}
-        <div className="flex flex-col pl-2 z-10">
-          <button
-            className="font-montserrart font-bold text-1xl text-left hover:underline-offset-2 hover:underline"
-            onClick={() => router.push(`/user/${userId}`)}
-          >
-            {userName}
-          </button>
+        <div className="flex flex-col pl-2 z-10 w-full">
+          <div className="flex flex-row w-full">
+            <button
+              className="font-montserrart font-bold text-1xl text-left hover:underline-offset-2 hover:underline"
+              onClick={() => router.push(`/user/${user_id}`)}
+            >
+              {userName}
+            </button>
+            {isOwner ? (
+              <div
+                className="flex flex-row-reverse w-full relative"
+                ref={menuRef}
+              >
+                <button onClick={handleMenu}>
+                  <MoreHorizIcon />
+                </button>
+                {menuOpen && (
+                  <div className="absolute top-10 right-0 bg-secondary border rounded shadow-lg text-red-600">
+                    <div className="flex flex-row p-5">
+                      <button onClick={(e)=>handleRemove(e)}>
+                        <h1 className="font-montserrart ">
+                          <DeleteIcon /> delete post
+                        </h1>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              ""
+            )}
+          </div>
           <h1>{formattedDate(date)}</h1>
         </div>
       </div>
@@ -299,10 +379,14 @@ const Posts: React.FC<PostProps> = ({
           onPrev={handlePrev}
           onNext={handleNext}
           onSave={handleSave}
+          editable={true}
         />
       </Link>
       <div className="flex flex-row z-10">
-        <div className="flex flex-row m-2 p-2 rounded-sm hover:bg-gray-400 hover:cursor-pointer hover:transition-colors ease-in duration-300">
+        <div
+          onClick={handleLiked}
+          className="flex flex-row m-2 p-2 rounded-sm hover:bg-gray-400 hover:cursor-pointer hover:transition-colors ease-in duration-300"
+        >
           <FavoriteBorderIcon
             className=""
             sx={{
@@ -329,7 +413,11 @@ const Posts: React.FC<PostProps> = ({
       {showComment ? (
         <div className="flex flex-col p-5 z-10">
           <div className="">
-            <CommentsInput postId={post_id} subComment={false} drawnImageEdited={drawnImageEdited??undefined} />
+            <CommentsInput
+              postId={post_id}
+              subComment={false}
+              drawnImageEdited={drawnImageEdited ?? undefined}
+            />
           </div>
           {renderComment()}
         </div>

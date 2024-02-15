@@ -44,7 +44,6 @@ const DragAndDrop = () => {
         `${defaultBackend}post/create`,
         formData
       );
-      console.log(response);
       location.reload();
     } catch (error) {
       console.error("Error creating post:", error);

@@ -10,7 +10,7 @@ const Vote = sequelize.define(
     },
     vote_type: {
       type: DataTypes.ENUM,
-      values: ["up", "down"],
+      values: ["up", "down","like"],
     },
     created_at: {
       type: DataTypes.DATE,
