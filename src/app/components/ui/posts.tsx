@@ -41,6 +41,7 @@ interface PostProps {
   isInProfile?: boolean;
   post_id?: number;
   comment?: Comment[];
+  toOpenModal: boolean
 }
 
 const formattedDate = (rawDate: string | undefined) => {
@@ -71,6 +72,7 @@ const Posts: React.FC<PostProps> = ({
   isInProfile,
   post_id,
   comment,
+  toOpenModal
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -78,11 +80,16 @@ const Posts: React.FC<PostProps> = ({
 
   const handleOpenModal = (
     index: number,
-    e: React.MouseEvent<HTMLDivElement>
+    e: React.MouseEvent<HTMLDivElement>,
+    toOpenModal:boolean
   ) => {
     e.preventDefault();
-    setCurrentIndex(index);
-    setOpenModal(true);
+    if(toOpenModal){
+      setCurrentIndex(index);
+      setOpenModal(true);
+    }else{
+      router.push(`/post/${post_id}`)
+    }
   };
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -178,7 +185,7 @@ const Posts: React.FC<PostProps> = ({
           <div
             className=""
             key={index}
-            onClick={(e) => handleOpenModal(index, e)}
+            onClick={(e) => handleOpenModal(index, e,toOpenModal)}
           >
             <Image
               src={image.image_path}

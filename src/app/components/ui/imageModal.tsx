@@ -65,6 +65,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
   const handleSave  = () => {
     setIsSaving(true);
     saveImage();
+    handleBackdropClick();
   };
   useEffect(() => {
     if (canvasRef.current && isEditing) {

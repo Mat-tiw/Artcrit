@@ -51,6 +51,7 @@ export default function Pages({params,}: Readonly<{ params: { id: number } }>) {
     };
     fetchPost();
   }, [params.id]);
+  console.log(post)
   return (
     <div className="bg-primaryBg flex flex-row min-h-screen">
       <div className="text-white basis-[20%] flex flex-col">
@@ -71,6 +72,7 @@ export default function Pages({params,}: Readonly<{ params: { id: number } }>) {
             post_id={post.id_post}
             isInProfile={false}
             comment={post.comments}
+            toOpenModal={true}
           />
         ) : (
           <div className="animate-pulse p-2">
@@ -82,6 +84,7 @@ export default function Pages({params,}: Readonly<{ params: { id: number } }>) {
               images={[]}
               userPic=""
               isInProfile={true}
+              toOpenModal={false}
             />
           </div>
         )}

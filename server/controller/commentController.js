@@ -155,7 +155,7 @@ export const upvoteComment = async (req, res) => {
       where: { vote_type: "down", comment_id: commentId },
     });
     const votePoints = upvotesCount - downvotesCount;
-    await Comment.update({vote_points:votePoints},{where:{comment_id:commentId}},)
+    await Comment.update({vote_points:votePoints},{where:{id_comment:commentId}},)
     return res.status(200).json({ message: "Comment upvoted successfully" });
   } catch (error) {
     return res
@@ -198,7 +198,7 @@ export const downvoteComment = async (req, res) => {
       where: { vote_type: "down", comment_id: commentId },
     });
     const votePoints = upvotesCount - downvotesCount;
-    await Comment.update({vote_points:votePoints},{where:{comment_id:commentId}},)
+    await Comment.update({vote_points:votePoints},{where:{id_comment:commentId}},)
     return res.status(200).json({ message: "Comment downvoted successfully" });
   } catch (error) {
     return res

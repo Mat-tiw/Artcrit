@@ -19,6 +19,9 @@ const Comment = sequelize.define("ac_comment", {
     type: DataTypes.DATE,
     allowNull: true,
   },
+  vote_points:{
+    type: DataTypes.INTEGER,
+  }
 },{
     Sequelize,
     modelName:"Comment",

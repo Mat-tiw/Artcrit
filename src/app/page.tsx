@@ -96,6 +96,7 @@ export default function Home() {
                 images={post.ac_images}
                 userPic={post.ac_user.user_avatar}
                 userId={post.ac_user.id_user}
+                toOpenModal={false}
               />
             ))
           ) : (
@@ -107,6 +108,7 @@ export default function Home() {
             userName="loading..."
             images={[]}
             userPic=""
+            toOpenModal={false}
           />
           </div>
           )}
