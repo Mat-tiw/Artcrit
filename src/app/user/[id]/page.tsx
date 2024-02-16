@@ -18,6 +18,7 @@ import Box from "@mui/material/Box";
 import EditIcon from "@mui/icons-material/Edit";
 import ImageModal from "@/app/components/ui/imageModal";
 import { Comments } from "@/app/components/ui/comments";
+import StarIcon from '@mui/icons-material/Star';
 const style = {
   position: "absolute",
   top: "50%",
@@ -61,6 +62,7 @@ interface User {
   user_avatar: string;
   id_user: number;
   user_bio: string;
+  user_points?: number
 }
 export default function Page({ params }: Readonly<{ params: { id: number } }>) {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -88,7 +90,6 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
           `${defaultBackend}comments/user/find/${params.id}`
         );
         setComments(res.data);
-        console.log(res.data)
       } catch (error) {}
     };
     fetchComment()
@@ -184,10 +185,11 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
   useEffect(() => {
     const fetchLikedPost = async () => {
       try {
-        const res = await axios.post(
+        const respond = await axios.post(
           `${defaultBackend}vote/get/post/${params.id}`
         );
-        setPostLike(res.data)
+        setPostLike(respond.data)
+        console.log(respond.data)
       } catch (error) {
         console.log("Error fetch post:", error);
       }
@@ -199,6 +201,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
       try {
         const res = await axios.get(`${defaultBackend}user/${params.id}`);
         setUser(res.data);
+        console.log("user: ",res.data)
       } catch (error) {
         console.error("Error fetching post:", error);
       }
@@ -265,6 +268,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                   </div>
                 </div>
                 <p className="mt-2 min-w-fit">{user?.user_bio}</p>
+                <p className="mt-5">reputation point: <StarIcon className="mb-2"/>{user?.user_points}</p>
               </div>
             </div>
             <Modal
@@ -479,6 +483,8 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                             commentImage={comments.ac_images}
                             parentId={comments.id_comment}
                             replyable={false}
+                            op={params.id}
+                            user_points={comments.ac_user.user_points}
                           />
                         </div>
                       ))}
@@ -496,7 +502,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                     <div className="flex flex-row flex-wrap m-2">
                       {image.map((images, index) => (
                         <div className="" key={images.id_image}>
-                          <button onClick={(e) => handleOpenModal(index, e)}>
+                          <div onClick={(e) => handleOpenModal(index, e)}>
                             <Image
                               className="object-cover m-2"
                               src={images.image_path}
@@ -504,7 +510,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                               height={500}
                               alt="placeholder"
                             />
-                          </button>
+                          </div>
                         </div>
                       ))}
                       <ImageModal

@@ -27,6 +27,7 @@ interface User {
   user_email: string;
   user_avatar: string;
   id_user: number;
+  user_points?:number
 }
 interface Images {
   id_image: number;
@@ -172,6 +173,7 @@ const Posts: React.FC<PostProps> = ({
               parentId={comments.id_comment}
               post_id={post_id}
               op={user_id}
+              user_points={comments.ac_user.user_points}
             />
             {comments.commentChild.map((child) => (
               <div className="ml-10" key={child.id_comment}>
@@ -185,6 +187,7 @@ const Posts: React.FC<PostProps> = ({
                   parentId={comments.id_comment}
                   post_id={post_id}
                   op={user_id}
+                  user_points={child.ac_user.user_points}
                 />
               </div>
             ))}

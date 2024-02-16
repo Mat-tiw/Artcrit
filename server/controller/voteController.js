@@ -46,7 +46,7 @@ export const getLikedPost = async (req, res) => {
           where: { user_id: userId, vote_type: "like" },
           attributes: [],
           order: [["created_at", "DESC"]],
-          required: false,
+          required: true,
         },
         {
           model: Image,

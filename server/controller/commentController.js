@@ -67,7 +67,7 @@ export const getUserComment = async (req, res) => {
         },
         {
           model: User,
-          attributes: ["id_user", "user_name", "user_email", "user_avatar"],
+          attributes: ["id_user", "user_name", "user_email", "user_avatar","user_points"],
         },
       ], });
     res.status(200).json(comment);

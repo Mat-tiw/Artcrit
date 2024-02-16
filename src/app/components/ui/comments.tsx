@@ -8,6 +8,8 @@ import { userId, defaultBackend } from "@/api/api";
 import axios from "axios";
 import { CommentsInput } from "./commentsInput";
 import ImageModal from "./imageModal";
+import Link from "next/link";
+import StarIcon from '@mui/icons-material/Star';
 interface CommentProps {
   userName?: string;
   userPic?: string;
@@ -18,7 +20,8 @@ interface CommentProps {
   parentId?: number;
   post_id?: number;
   replyable?: boolean;
-  op?:number
+  op?: number;
+  user_points?:number
 }
 interface Images {
   id_image: number;
@@ -34,7 +37,8 @@ const Comments: React.FC<CommentProps> = ({
   parentId,
   post_id,
   replyable,
-  op
+  op,
+  user_points
 }) => {
   const [userClick, setUserClick] = useState<string | null>(null);
   const [votePoint, setVotePoint] = useState<number | null | undefined>(
@@ -80,7 +84,8 @@ const Comments: React.FC<CommentProps> = ({
   const handleUpVote = async () => {
     try {
       await axios.post(`${defaultBackend}comments/${comment_id}/upvote`, {
-        userId,op
+        userId,
+        op,
       });
       if (userClick === null || userClick === "down")
         setVotePoint((prevVotePoint) => (prevVotePoint || 0) + 1);
@@ -100,7 +105,8 @@ const Comments: React.FC<CommentProps> = ({
   const handleDownVote = async () => {
     try {
       await axios.post(`${defaultBackend}comments/${comment_id}/downvote`, {
-        userId,op
+        userId,
+        op,
       });
       if (userClick === null || userClick === "up")
         setVotePoint((prevVotePoint) => (prevVotePoint || 0) - 1);
@@ -132,14 +138,21 @@ const Comments: React.FC<CommentProps> = ({
       </div>
       <div className="flex flex-col pl-4  w-full">
         <div className="flex flex-row">
-          <Avatar src={userPic ?? ""} />
-          <p className="font-montserrat pl-2 pt-2 font-semibold">{userName}</p>
+          <Link href={`/user/${op}`}>
+            <Avatar src={userPic ?? ""} />
+          </Link>
+          <Link href={`/user/${op}`}>
+            <p className="font-montserrat pl-2 pt-2 font-semibold">
+              {userName}
+            </p>
+          </Link>
         </div>
+          <div className="flex flex-row"><StarIcon className="mt-2 ml-10"/><p className="mt-2"> {user_points}</p></div>
         <p className="font-karla pt-2 text-wrap">{commentContent}</p>
         <div className="flex flex-row">
           {commentImage?.map((image, index) => (
             <div
-              className=""
+              className="flex flex-row flex-wrap"
               key={image.id_image}
               onClick={(e) => handleOpenModal(index, e)}
             >
@@ -147,8 +160,8 @@ const Comments: React.FC<CommentProps> = ({
                 className="m-1 object-cover"
                 src={image.image_path}
                 alt={`Preview ${image.image_path}`}
-                width={100}
-                height={100}
+                width={300}
+                height={300}
               />
             </div>
           ))}

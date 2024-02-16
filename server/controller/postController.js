@@ -134,7 +134,7 @@ export const getPostWithComments = async (req, res) => {
         },
         {
           model: User,
-          attributes: ["id_user", "user_name", "user_email", "user_avatar"],
+          attributes: ["id_user", "user_name", "user_email", "user_avatar","user_points"],
         },
       ],
     });
@@ -153,7 +153,7 @@ export const getPostWithComments = async (req, res) => {
           },
           {
               model: User,
-              attributes: ["id_user", "user_name", "user_email", "user_avatar"],
+              attributes: ["id_user", "user_name", "user_email", "user_avatar","user_points"],
           },
       ],
       order: [["vote_points", "DESC"]]
