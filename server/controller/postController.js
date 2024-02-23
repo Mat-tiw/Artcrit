@@ -1,13 +1,10 @@
 import Post from "../model/Post.js";
 import Image from "../model/Image.js";
-import Vote from "../model/Vote.js";
 import Comment from "../model/Comment.js";
 import { fileURLToPath } from "url";
-import { dirname } from "path";
 import multer from "multer";
 import crypto from "crypto";
 import User from "../model/User.js";
-import { comment } from "postcss";
 function generateRandomString(length) {
   return crypto.randomBytes(length).toString("hex");
 }

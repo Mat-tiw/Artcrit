@@ -345,13 +345,13 @@ const Posts: React.FC<PostProps> = ({
                 className="flex flex-row-reverse w-full relative"
                 ref={menuRef}
               >
-                <button onClick={handleMenu}>
+                <button onClick={handleMenu} id="userPostHambergerBtn">
                   <MoreHorizIcon />
                 </button>
                 {menuOpen && (
                   <div className="absolute top-10 right-0 bg-secondary border rounded shadow-lg text-red-600">
                     <div className="flex flex-row p-5">
-                      <button onClick={(e)=>handleRemove(e)}>
+                      <button onClick={(e)=>handleRemove(e)} id="deleteUserPost">
                         <h1 className="font-montserrart ">
                           <DeleteIcon /> delete post
                         </h1>
@@ -399,7 +399,7 @@ const Posts: React.FC<PostProps> = ({
           />
           <p className="m-2">Like</p>
         </div>
-        <Link href={`/post/${post_id}`}>
+        <Link href={`/post/${post_id}`} id="toComment">
           <div className="flex flex-row m-2 p-2 rounded-sm hover:bg-gray-400 hover:cursor-pointer hover:transition-colors ease-in duration-300">
             <ChatBubbleOutlineIcon
               className=""

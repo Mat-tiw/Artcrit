@@ -116,6 +116,7 @@ const DragAndDrop = () => {
         </p>
 
         <input
+        id="postBadgeInput"
           className="font-montserrart bg-transparent border-none focus:border-none outline-none"
           type="text"
           placeholder="Post badge"
@@ -139,7 +140,7 @@ const DragAndDrop = () => {
 
         <div className={login ? "" : "hidden"}>
           <div {...getRootProps()}>
-            <input {...getInputProps()} aria-describedby="image-input" />
+            <input {...getInputProps()} aria-describedby="image-input" id="postFileInput" />
             {isDragActive ? (
               <p className="border-primary border-2 border-dotted font-montserrart text-neutral-400">
                 Drop image file here
@@ -187,6 +188,7 @@ const DragAndDrop = () => {
                   ? "border-gray-500 border-2 rounded-lg text-gray-500 pl-5 pr-5 ml-auto mr-8"
                   : "border-primary border-2 rounded-lg text-primary pl-5 pr-5 ml-auto mr-8"
               }
+              id="postCreationBtn"
             >
               Submit
             </button>

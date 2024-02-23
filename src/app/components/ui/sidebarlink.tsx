@@ -43,14 +43,15 @@ interface SideBarLinkProps
   text?: string;
   href?: string;
   className?: string;
+  id?:string;
 }
 
 const SideBarLink = React.forwardRef<HTMLDivElement, SideBarLinkProps>(
-  ({ className, text, textSize, icon, href, variant, ...props }, ref) => {
+  ({ className, text, textSize, icon, href, variant,id, ...props }, ref) => {
     return (
       <>
         {href ? ( 
-            <a href={href} className={cn(SideBarLinkVariants({ className, variant }))}{...props}>
+            <a id={id} href={href} className={cn(SideBarLinkVariants({ className, variant }))}{...props}>
               <div className="">{iconType[icon]}</div>
               <h1 className="pl-5">{text}</h1>
             </a>

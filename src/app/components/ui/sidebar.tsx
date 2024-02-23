@@ -40,6 +40,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                 textSize="default"
                 text="profile"
                 href={`/user/${userId}`}
+                id="toProfile"
               />
             ) : (
               ""

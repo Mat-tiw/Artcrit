@@ -20,7 +20,6 @@ const style = {
 const USER_REGEX = /^[A-Za-z][A-Za-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%]).{8,24}$/;
 
-
 const MiniProfile: React.FC = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -92,12 +91,14 @@ const MiniProfile: React.FC = () => {
           ""
         )}
         {login ? (
-          <h1 className="font-montserrat font-bold pb-5 text-2xl">
+          <h1 id="username" className="font-montserrat font-bold pb-5 text-2xl">
+            
             {localStorage.getItem("userName")}
           </h1>
         ) : (
           <div className="mt-5 mb-4 flex flex-col">
             <button
+              id="openInputBtn"
               className="text-center item-center text-primary font-montserrat font-bold p-2 mb-2 text-2xl cursor-pointer border-2 border-primary rounded-xl"
               onClick={handleOpen}
             >
@@ -105,6 +106,7 @@ const MiniProfile: React.FC = () => {
             </button>
             <i className="border-b-gray-400 w-full border-1"></i>
             <button
+              id="openRegiBtn"
               className="text-center text-primary font-montserrat font-bold p-2 mb-2 text-2xl cursor-pointer border-2 border-primary rounded-xl"
               onClick={handleOpenRegi}
             >
@@ -122,6 +124,7 @@ const MiniProfile: React.FC = () => {
         <Box sx={style}>
           <h1 className="font-montserrart text-2xl font-bold">Login</h1>
           <input
+            id="usernameLoginInput"
             type="text"
             onChange={(e) => setUser(e.target.value)}
             className="
@@ -130,6 +133,7 @@ const MiniProfile: React.FC = () => {
             placeholder="username"
           />
           <input
+            id="pwdLoginInput"
             type="text"
             onChange={(e) => setPwd(e.target.value)}
             className=" text-xl font-montserrart
@@ -137,6 +141,7 @@ const MiniProfile: React.FC = () => {
             placeholder="password"
           />
           <button
+            id="submitLoginForm"
             onClick={handleSubmit}
             className="translate-x-28 mt-5 border-white border-2 p-2 rounded-xl text-xl font-montserrart hover:text-secondary hover:bg-primary hover:border-transparent transition-colors ease-out duration-1000"
           >
@@ -153,6 +158,7 @@ const MiniProfile: React.FC = () => {
         <Box sx={style}>
           <h1 className="font-montserrart text-2xl font-bold">Register</h1>
           <input
+            id="usernameRegiInput"
             value={user}
             autoComplete="off"
             aria-invalid={validName ? "false" : "true"}
@@ -181,6 +187,7 @@ const MiniProfile: React.FC = () => {
             Letters, numbers, underscores, hyphens allowed.
           </p>
           <input
+            id="pwdRegiInput"
             type="text"
             className=" text-xl font-montserrart
             bg-transparent m-5 border-white border-2 border-t-transparent border-r-transparent border-l-transparent focus:border-t-transparent"
@@ -214,6 +221,7 @@ const MiniProfile: React.FC = () => {
             <span aria-label="percent">%</span>
           </p>
           <input
+            id="confirmpwdRegiInput"
             type="text"
             className=" text-xl font-montserrart
             bg-transparent m-5 border-white border-2 border-t-transparent border-r-transparent border-l-transparent focus:border-t-transparent"

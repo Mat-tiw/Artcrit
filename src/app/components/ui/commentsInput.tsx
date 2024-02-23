@@ -181,6 +181,7 @@ export const CommentsInput: React.FC<CommentProps> = ({
                 type="button"
                 onClick={handleButtonClick}
                 className="right-0 bottom-0 bg-transparent m-2 ml-14"
+                id="refToInput"
               >
                 <AddPhotoAlternateOutlinedIcon />
               </button>
@@ -189,12 +190,14 @@ export const CommentsInput: React.FC<CommentProps> = ({
                 ref={fileInputRef}
                 type="file"
                 className="inset-0 cursor-pointer hidden"
+                id="commentFileInput"
               />
               <div className="flex flex-row-reverse w-full">
                 <div className="bg-primary text-primaryBg rounded-xl m-1">
                   <button
                     className="font-montserrart font-bold p-1"
                     type="submit"
+                    id="commentSubmit"
                   >
                     Submit
                   </button>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.0 (Python 3.12.0 on win32)" generated="2024-02-23T21:07:33.206519" rpa="false" schemaversion="5">
+<suite id="s1" name="Profile" source="d:\Desktop\artcrit-alpha\artcrit-early\test\profile.robot">
+<kw name="Open Browser" owner="SeleniumLibrary" type="SETUP">
+<msg time="2024-02-23T21:07:33.890912" level="INFO">Opening browser 'chrome' to base url 'http://localhost:3000'.</msg>
+<arg>${URL}</arg>
+<arg>chrome</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2024-02-23T21:07:33.889908" elapsed="5.223349"/>
+</kw>
+<test id="s1-t1" name="CreateComment" line="59">
+<kw name="Check Page">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>${MainPage}</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2024-02-23T21:07:39.117255" elapsed="0.053171"/>
+</kw>
+<status status="PASS" start="2024-02-23T21:07:39.115257" elapsed="0.055169"/>
+</kw>
+<kw name="Click Login">
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2024-02-23T21:07:39.177433" level="INFO">Clicking element 'id=openInputBtn'.</msg>
+<arg>${loginBtn}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2024-02-23T21:07:39.174435" elapsed="0.194834"/>
+</kw>
+<status status="PASS" start="2024-02-23T21:07:39.172435" elapsed="0.197833"/>
+</kw>
+<kw name="Input username">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2024-02-23T21:07:39.378274" level="INFO">Typing text 'tester' into text field 'id=usernameLoginInput'.</msg>
+<arg>${userLoginInput}</arg>
+<arg>${usernameInfo}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2024-02-23T21:07:39.377274" elapsed="0.244819"/>
+</kw>
+<arg>${usernameInfo}</arg>
+<status status="PASS" start="2024-02-23T21:07:39.376271" elapsed="0.246822"/>
+</kw>
+<kw name="Input password">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2024-02-23T21:07:39.627093" level="INFO">Typing text 'asd' into text field 'id=pwdLoginInput'.</msg>
+<arg>${passwordLoginInput}</arg>
+<arg>${password}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2024-02-23T21:07:39.626092" elapsed="0.253375"/>
+</kw>
+<arg>${password}</arg>
+<status status="PASS" start="2024-02-23T21:07:39.624094" elapsed="0.255373"/>
+</kw>
+<kw name="Click submitBtn">
+<kw name="Click Button" owner="SeleniumLibrary">
+<msg time="2024-02-23T21:07:39.881984" level="INFO">Clicking button 'id=submitLoginForm'.</msg>
+<arg>${submitBtn}</arg>
+<doc>Clicks the button identified by ``locator``.</doc>
+<status status="PASS" start="2024-02-23T21:07:39.880978" elapsed="0.114988"/>
+</kw>
+<status status="PASS" start="2024-02-23T21:07:39.879977" elapsed="0.115989"/>
+</kw>
+<kw name="Check Login">
+<kw name="Wait Until Page Contains Element" owner="SeleniumLibrary">
+<arg>${login}</arg>
+<doc>Waits until the element ``locator`` appears on the current page.</doc>
+<status status="PASS" start="2024-02-23T21:07:39.999485" elapsed="3.001121"/>
+</kw>
+<status status="PASS" start="2024-02-23T21:07:39.997970" elapsed="3.003634"/>
+</kw>
+<kw name="Click BtnToProfile">
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2024-02-23T21:07:43.002604" level="INFO">Clicking element 'id=toProfile'.</msg>
+<arg>${toProfile}</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2024-02-23T21:07:43.002604" elapsed="1.148446"/>
+</kw>
+<status status="PASS" start="2024-02-23T21:07:43.001604" elapsed="1.150451"/>
+</kw>
+<kw name="Check ProfilePage">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>${usernameInfo}</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2024-02-23T21:07:44.155057" elapsed="0.149351"/>
+</kw>
+<status status="PASS" start="2024-02-23T21:07:44.154057" elapsed="0.150351"/>
+</kw>
+<kw name="Click EditProfileBtn">
+<kw name="Click Button" owner="SeleniumLibrary">
+<msg time="2024-02-23T21:07:44.307408" level="INFO">Clicking button 'id=editProfileButton'.</msg>
+<arg>${editProfileBtn}</arg>
+<doc>Clicks the button identified by ``locator``.</doc>
+<status status="PASS" start="2024-02-23T21:07:44.306407" elapsed="0.271711"/>
+</kw>
+<status status="PASS" start="2024-02-23T21:07:44.305408" elapsed="0.272710"/>
+</kw>
+<kw name="Input commentFileInput">
+<kw name="Choose File" owner="SeleniumLibrary">
+<msg time="2024-02-23T21:07:44.583664" level="INFO">Sending D:\Desktop\artcrit-alpha\artcrit-early\public\test3.jpg to browser.</msg>
+<arg>${editUserAvater}</arg>
+<arg>${filePath}</arg>
+<doc>Inputs the ``file_path`` into the file input field ``locator``.</doc>
+<status status="PASS" start="2024-02-23T21:07:44.582660" elapsed="0.271996"/>
+</kw>
+<status status="PASS" start="2024-02-23T21:07:44.581654" elapsed="0.274002"/>
+</kw>
+<kw name="Input EditUsername">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2024-02-23T21:07:44.859657" level="INFO">Typing text 'tester' into text field 'id=editUsername'.</msg>
+<arg>${editUsername}</arg>
+<arg>${usernameInfo}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2024-02-23T21:07:44.858658" elapsed="0.349163"/>
+</kw>
+<status status="PASS" start="2024-02-23T21:07:44.857657" elapsed="0.350164"/>
+</kw>
+<kw name="Input EditUserBio">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2024-02-23T21:07:45.210353" level="INFO">Typing text 'hello bio from automated test' into text field 'id=editUserBio'.</msg>
+<arg>${editUserBio}</arg>
+<arg>${bio}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2024-02-23T21:07:45.209332" elapsed="0.956810"/>
+</kw>
+<status status="PASS" start="2024-02-23T21:07:45.209332" elapsed="0.956810"/>
+</kw>
+<kw name="Click EditProfileFormSubmitBtn">
+<kw name="Click Button" owner="SeleniumLibrary">
+<msg time="2024-02-23T21:07:46.168142" level="INFO">Clicking button 'id=editProfileFormSubmitBtn'.</msg>
+<arg>${editProfileFormSubmitBtn}</arg>
+<doc>Clicks the button identified by ``locator``.</doc>
+<status status="PASS" start="2024-02-23T21:07:46.168142" elapsed="0.096295"/>
+</kw>
+<status status="PASS" start="2024-02-23T21:07:46.167142" elapsed="0.098292"/>
+</kw>
+<kw name="Check EditSuccess">
+<kw name="Wait Until Page Contains" owner="SeleniumLibrary">
+<arg>${bio}</arg>
+<doc>Waits until ``text`` appears on the current page.</doc>
+<status status="PASS" start="2024-02-23T21:07:46.266947" elapsed="0.022589"/>
+</kw>
+<status status="PASS" start="2024-02-23T21:07:46.265434" elapsed="0.024102"/>
+</kw>
+<status status="PASS" start="2024-02-23T21:07:39.114255" elapsed="7.176307"/>
+</test>
+<status status="PASS" start="2024-02-23T21:07:33.218049" elapsed="13.083633"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="1" fail="0" skip="0" id="s1" name="Profile">Profile</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

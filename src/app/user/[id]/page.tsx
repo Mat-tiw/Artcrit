@@ -251,7 +251,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
               />
               <div className="flex flex-col ml-10 w-full">
                 <div className="flex flex-row w-full">
-                  <h1 className="font-montserrart font-bold text-4xl">
+                  <h1 id="profileUserName" className="font-montserrart font-bold text-4xl">
                     {user?.user_name}
                   </h1>
                   <div className="flex flex-row-reverse w-full">
@@ -259,6 +259,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                       <button
                         className="font-montserrart font-semibold border-2 border-primary text-primary rounded-3xl p-1"
                         onClick={handleOpen}
+                        id="editProfileButton"
                       >
                         Edit profile
                       </button>
@@ -314,14 +315,16 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                     <input
                       ref={fileInputRef}
                       type="file"
-                      style={{ display: "none" }}
+                      className="hidden"
                       onChange={handleFileChange}
+                      id="editUserAvatar"
                     />
                   </div>
                   <p className="font-montserrart">username:</p>
                   <div className="flex flex-row">
                     <EditIcon className="text-gray-300 mt-3 mr-2" />
                     <input
+                    id="editUsername"
                       value={editUserName ?? ""}
                       className="mt-2 font-karla text-xl bg-transparent border-none focus:border-none outline-none placeholder-white"
                       type="text"
@@ -333,6 +336,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                   <div className="flex flex-row">
                     <EditIcon className="text-gray-300 mt-3 mr-2" />
                     <textarea
+                    id="editUserBio"
                       ref={textareaRef}
                       placeholder={user?.user_bio}
                       onChange={(e) => handleTextareaChange(e)}
@@ -347,6 +351,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                   </div>
                   <div className="flex flex-row-reverse">
                     <button
+                    id="editProfileFormSubmitBtn"
                       type="submit"
                       className="mt-2 font-montserrart text-xl border-primary border-2 rounded-lg p-2"
                     >
