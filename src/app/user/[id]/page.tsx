@@ -157,6 +157,9 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
       if (selectedFile) {
         formData.append("selectedFile", selectedFile);
       }
+      setTimeout(() => {
+        window.location.reload();
+    }, 100);
       const response = await axios.post(
         `${defaultBackend}user/update/${userId}`,
         formData
@@ -189,7 +192,6 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
           `${defaultBackend}vote/get/post/${params.id}`
         );
         setPostLike(respond.data)
-        console.log(respond.data)
       } catch (error) {
         console.log("Error fetch post:", error);
       }

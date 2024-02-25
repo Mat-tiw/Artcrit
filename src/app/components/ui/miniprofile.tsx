@@ -68,10 +68,20 @@ const MiniProfile: React.FC = () => {
   };
   const handleSubmitCreate = async () => {
     try {
-      const res = await axios.post(`${defaultBackend}user/create`, {
+      await axios.post(`${defaultBackend}user/create`, {
         user: user,
         pwd: pwd,
       });
+      const res = await axios.post(`${defaultBackend}user/login`, {
+        user: user,
+        pwd: pwd,
+      });
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userName", res.data.userName);
+      localStorage.setItem("userPic", res.data.userPic);
+      localStorage.setItem("userId", res.data.userId);
+      setOpen(false);
+      location.reload();
       setOpenRegi(false);
     } catch (error) {
       console.error("Error submitting data:", error);
