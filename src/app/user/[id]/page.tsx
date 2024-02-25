@@ -18,7 +18,7 @@ import Box from "@mui/material/Box";
 import EditIcon from "@mui/icons-material/Edit";
 import ImageModal from "@/app/components/ui/imageModal";
 import { Comments } from "@/app/components/ui/comments";
-import StarIcon from '@mui/icons-material/Star';
+import StarIcon from "@mui/icons-material/Star";
 const style = {
   position: "absolute",
   top: "50%",
@@ -62,18 +62,30 @@ interface User {
   user_avatar: string;
   id_user: number;
   user_bio: string;
-  user_points?: number
+  user_points?: number;
 }
+const USER_REGEX = /^[A-Za-z][A-Za-z0-9-_]{3,23}$/;
 export default function Page({ params }: Readonly<{ params: { id: number } }>) {
   const [posts, setPosts] = useState<Post[]>([]);
+
   const [postLike, setPostLike] = useState<Post[]>([]);
+
   const [user, setUser] = useState<User>();
+
   const [image, setImage] = useState<Images[]>([]);
+
   const [activeTab, setActiveTab] = useState<string>("overview");
+
   const [noPost, setNoPost] = useState(true);
+
   const [editUserName, setEditUserName] = useState<string>("");
+  const [validEditname, setValidEditName] = useState<boolean>(false);
+  const [userFocus, setUserFocus] = useState<boolean>(false);
+
   const [comment, setComments] = useState<Comment[]>([]);
+
   const [editBio, setEditBio] = useState<string>("");
+
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -84,6 +96,10 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
   const [drawnImageEdited, setDrawnImageEdited] = useState<File | null>(null);
 
   useEffect(() => {
+    setValidEditName(USER_REGEX.test(editUserName));
+  }, [editUserName]);
+
+  useEffect(() => {
     const fetchComment = async () => {
       try {
         const res = await axios.post(
@@ -92,13 +108,10 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
         setComments(res.data);
       } catch (error) {}
     };
-    fetchComment()
+    fetchComment();
   }, [params.id]);
 
-  const handleOpenModal = (
-    index: number,
-    e: React.MouseEvent<MouseEvent>
-  ) => {
+  const handleOpenModal = (index: number, e: React.MouseEvent<MouseEvent>) => {
     e.preventDefault();
     setCurrentIndex(index);
     setOpenModal(true);
@@ -159,7 +172,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
       }
       setTimeout(() => {
         window.location.reload();
-    }, 100);
+      }, 100);
       const response = await axios.post(
         `${defaultBackend}user/update/${userId}`,
         formData
@@ -191,7 +204,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
         const respond = await axios.post(
           `${defaultBackend}vote/get/post/${params.id}`
         );
-        setPostLike(respond.data)
+        setPostLike(respond.data);
       } catch (error) {
         console.log("Error fetch post:", error);
       }
@@ -203,7 +216,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
       try {
         const res = await axios.get(`${defaultBackend}user/${params.id}`);
         setUser(res.data);
-        console.log("user: ",res.data)
+        localStorage.setItem("userName", res.data.user_name);
       } catch (error) {
         console.error("Error fetching post:", error);
       }
@@ -253,7 +266,10 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
               />
               <div className="flex flex-col ml-10 w-full">
                 <div className="flex flex-row w-full">
-                  <h1 id="profileUserName" className="font-montserrart font-bold text-4xl">
+                  <h1
+                    id="profileUserName"
+                    className="font-montserrart font-bold text-4xl"
+                  >
                     {user?.user_name}
                   </h1>
                   <div className="flex flex-row-reverse w-full">
@@ -271,7 +287,10 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                   </div>
                 </div>
                 <p className="mt-2 min-w-fit">{user?.user_bio}</p>
-                <p className="mt-5">reputation point: <StarIcon className="mb-2"/>{user?.user_points}</p>
+                <p className="mt-5">
+                  reputation point: <StarIcon className="mb-2" />
+                  {user?.user_points}
+                </p>
               </div>
             </div>
             <Modal
@@ -325,20 +344,42 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                   <p className="font-montserrart">username:</p>
                   <div className="flex flex-row">
                     <EditIcon className="text-gray-300 mt-3 mr-2" />
+                    <div className="flex flex-col">
                     <input
-                    id="editUsername"
+                      id="editUsername"
                       value={editUserName ?? ""}
+                      aria-invalid={validEditname ? "false" : "true"}
+                      aria-describedby="editUsernote"
+                      autoComplete="off"
                       className="mt-2 font-karla text-xl bg-transparent border-none focus:border-none outline-none placeholder-white"
                       type="text"
                       placeholder={user?.user_name}
                       onChange={(e) => setEditUserName(e.target.value)}
+                      onFocus={() => setUserFocus(true)}
+                      onBlur={() => setUserFocus(false)}
                     />
+                    <p
+                      id="editUsernote"
+                      className={
+                        userFocus && editUserName && !validEditname
+                          ? "text-white border-2 border-red-700 rounded-xl p-2"
+                          : "hidden"
+                      }
+                    >
+                      {" "}
+                      4 to 24 characters.
+                      <br />
+                      Must begin with a letter.
+                      <br />
+                      Letters, numbers, underscores, hyphens allowed.
+                    </p>
+                    </div>
                   </div>
                   <p className="font-montserrart">user bio:</p>
                   <div className="flex flex-row">
                     <EditIcon className="text-gray-300 mt-3 mr-2" />
                     <textarea
-                    id="editUserBio"
+                      id="editUserBio"
                       ref={textareaRef}
                       placeholder={user?.user_bio}
                       onChange={(e) => handleTextareaChange(e)}
@@ -353,7 +394,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                   </div>
                   <div className="flex flex-row-reverse">
                     <button
-                    id="editProfileFormSubmitBtn"
+                      id="editProfileFormSubmitBtn"
                       type="submit"
                       className="mt-2 font-montserrart text-xl border-primary border-2 rounded-lg p-2"
                     >
