@@ -13,7 +13,8 @@ ${RegipwdInput}         id=pwdRegiInput
 ${RegiConfirmpwdInput}  id=confirmpwdRegiInput
 ${usernameInfo}         john
 ${password}             !Dd12345
-
+${emailInput}         id=regiEmailInput
+${email}               tester2@gmail.com
 
 *** Keywords ***
 Check Page
@@ -23,6 +24,9 @@ Click Register
 Input username
    [Arguments]    ${usernameInfo}
    Input Text    ${RegiUsernameInput}    ${usernameInfo}
+Input Email 
+   [Arguments]       ${email}
+   Input Text ${emailInput}        ${email}
 Input password
   [Arguments]   ${password}
   Input Text    ${RegipwdInput}    ${password}

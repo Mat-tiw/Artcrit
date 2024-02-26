@@ -8,9 +8,9 @@ Suite Setup       Open Browser    ${URL}    chrome
 ${URL}             http://localhost:3000
 ${MainPage}        Artcrit
 ${loginBtn}        id=openInputBtn
-${userLoginInput}  id=usernameLoginInput
 ${passwordLoginInput}  id=pwdLoginInput
-${usernameInfo}         tester
+${emailInput}         id=regiEmailInput
+${email}               tester2@gmail.com
 ${password}             asd
 ${submitBtn}        id=submitLoginForm
 ${login}             id=username
@@ -28,9 +28,9 @@ Check Page
    Wait Until Page Contains        ${MainPage}
 Click Login
    Click Element    ${loginBtn}
-Input username
-   [Arguments]    ${usernameInfo}
-   Input Text    ${userLoginInput}    ${usernameInfo}
+Input Email 
+   [Arguments]       ${email}
+   Input Text ${emailInput}        ${email}
 Input password
   [Arguments]   ${password}
   Input Text    ${passwordLoginInput}    ${password}
@@ -59,7 +59,7 @@ Login
    [Documentation]
    Check Page
    Click Login
-   Input username       ${usernameInfo}
+   Input Email          ${email}
    Input password       ${password}
    Click submitBtn
    Check Login

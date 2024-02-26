@@ -99,7 +99,12 @@ export const addUser = async (req, res) => {
     const { user, pwd, email } = req.body;
     const user_name = user;
     const user_email = email;
+
     let user_password = await bcrypt.hash(pwd, 13);
+
+    let userCheck = await User.findOne({where:{user_email}})
+    if(userCheck)return res.status(401).json({error:true})
+    
     const newUser = await User.create({
       user_name,
       user_password,
@@ -107,18 +112,18 @@ export const addUser = async (req, res) => {
       user_avatar,
     });
 
-    res.status(201).json(newUser);
+    res.status(201).json({newUser,error:false});
   } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 export const loginUser = async (req, res) => {
-  const { user, pwd } = req.body;
-  const user_name = user;
+  const { email, pwd } = req.body;
+  const user_email = email;
   const user_password = pwd;
   try {
-    const user = await User.findOne({ where: { user_name } });
+    const user = await User.findOne({ where: { user_email } });
 
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
@@ -168,3 +173,13 @@ export const calculateUserPoint = async (userId) => {
     throw new Error("Failed to calculate user points: " + error.message);
   }
 };
+export const deleteUser = async (req,res)=>{
+  try {
+    const id = req.params.id
+    const user = await User.findByPk(id)
+    await user.destroy();
+    return res.status(200)
+  } catch (error) {
+    return res.json(error)
+  }
+}

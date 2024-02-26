@@ -1,5 +1,5 @@
 import express from "express";
-import { allUser,addUser,loginUser,findUser,updateUser,updateUserAvatar } from "../controller/userController.js";
+import { allUser,addUser,loginUser,findUser,updateUser,updateUserAvatar,deleteUser } from "../controller/userController.js";
 import {testFile,uploadPostImage,createPost,getAllPost,getPost,getUserPost,getPostWithComments,removePost} from "../controller/postController.js";
 import { getAllUserImage,testImageSaving,uploadTestImage } from "../controller/imageController.js";
 import { addComment,uploadCommentArray,upvoteComment,downvoteComment,getPostComment,addChildComment,uploadChildCommentArray,getUserComment } from "../controller/commentController.js";
@@ -12,6 +12,7 @@ router.post('/user/create',addUser);
 router.post('/user/login',loginUser)
 router.get('/user/:id', findUser);
 router.post('/user/update/:id', updateUserAvatar, updateUser);
+router.post('/user/delete/:id',deleteUser)
 
 
 router.post('/post/create',uploadPostImage,createPost);

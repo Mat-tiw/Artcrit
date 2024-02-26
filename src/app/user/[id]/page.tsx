@@ -19,6 +19,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import ImageModal from "@/app/components/ui/imageModal";
 import { Comments } from "@/app/components/ui/comments";
 import StarIcon from "@mui/icons-material/Star";
+import { useRouter } from "next/navigation";
 const style = {
   position: "absolute",
   top: "50%",
@@ -95,6 +96,8 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [drawnImageEdited, setDrawnImageEdited] = useState<File | null>(null);
 
+
+
   useEffect(() => {
     setValidEditName(USER_REGEX.test(editUserName));
   }, [editUserName]);
@@ -111,7 +114,7 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
     fetchComment();
   }, [params.id]);
 
-  const handleOpenModal = (index: number, e: React.MouseEvent<MouseEvent>) => {
+  const handleOpenModal = (index: number, e:any) => {
     e.preventDefault();
     setCurrentIndex(index);
     setOpenModal(true);
@@ -195,6 +198,17 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
   const handleClose = () => setEditActive(false);
   const handleOpen = () => setEditActive(true);
 
+  const [deleteActive,setDeleteActive] = useState<boolean>(false)
+  const handleDeleteClose = ()=>{
+    setDeleteActive(false)
+    setEditActive(true)
+  }
+  const handleDeleteOpen = ()=>{
+    setDeleteActive(true)
+    setEditActive(false)
+  }
+
+
   const [isHovered, setIsHovered] = useState(false);
 
   const updateUserId = userId !== null ? parseInt(userId) : null;
@@ -215,6 +229,9 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
     const fetchUser = async () => {
       try {
         const res = await axios.get(`${defaultBackend}user/${params.id}`);
+        if(res.data === null){
+          router.push('/404')
+        }
         setUser(res.data);
         localStorage.setItem("userName", res.data.user_name);
       } catch (error) {
@@ -247,6 +264,20 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
     };
     fetchImage();
   }, [params.id]);
+
+  const router = useRouter();
+
+  const handleDeleting = async()=>{
+    try {
+      setTimeout(() => {
+        localStorage.clear();
+        router.push('/404')
+        location.reload();
+      }, 100);
+      await axios.post(`${defaultBackend}user/delete/${params.id}`)
+    } catch (error) {
+    }
+  }
   return (
     <div className="flex flex-col">
       <Banner />
@@ -392,7 +423,15 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                       rows={1}
                     />
                   </div>
-                  <div className="flex flex-row-reverse">
+                  <div className="flex flex-row justify-between">
+                  <button
+                      id="deleteUser"
+                      type="button"
+                      className="mt-2 font-montserrart text-xl border-red-500 text-white border-2 rounded-lg p-2"
+                      onClick={handleDeleteOpen}
+                    >
+                      Delete user
+                    </button>
                     <button
                       id="editProfileFormSubmitBtn"
                       type="submit"
@@ -401,6 +440,29 @@ export default function Page({ params }: Readonly<{ params: { id: number } }>) {
                       Submit
                     </button>
                   </div>
+                </form>
+              </Box>
+            </Modal>
+            <Modal
+            open={deleteActive}
+            onClose={handleDeleteClose}
+            >
+              <Box sx={style}>
+                <form action={handleDeleting} className="flex flex-col items-center">
+                  <h1 className="font-bold font-montserrart text-2xl">
+                    Delete this account?
+                  </h1>
+                  <Avatar className="mt-2" src={user?.user_avatar} sx={{width:100,height:100}}/>
+                  <h1 className="font-bold font-montserrart text-2xl mt-2">
+                  {user?.user_name}
+                  </h1>
+                  <button
+                      id="deleteUserFinal"
+                      type="submit"
+                      className="mt-2 font-montserrart text-xl border-red-500 text-white border-2 rounded-lg p-2"
+                    >
+                      Delete
+                    </button>
                 </form>
               </Box>
             </Modal>

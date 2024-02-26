@@ -30,13 +30,13 @@ const MiniProfile: React.FC = () => {
 
   const [openRegi, setOpenRegi] = useState(false);
   const handleOpenRegi = () => setOpenRegi(true);
-  const handleCloseRegi = () =>{
+  const handleCloseRegi = () => {
     setOpenRegi(false);
-    setUser("")
-    setEmail("")
-    setPwd("")
-    setMatchPwd("")
-  }
+    setUser("");
+    setEmail("");
+    setPwd("");
+    setMatchPwd("");
+  };
 
   const [user, setUser] = useState<string>("");
   const [validName, setValidName] = useState<boolean>(false);
@@ -54,30 +54,34 @@ const MiniProfile: React.FC = () => {
   const [validEmail, setValidEmail] = useState<boolean>(false);
   const [emailFocus, setEmailFocus] = useState<boolean>(false);
 
-  const [visibilityIcon , setVisibilityIcon] = useState<boolean>(false)
-  const [inputState,setInputState] = useState<string>("password")
+  const [visibilityIcon, setVisibilityIcon] = useState<boolean>(false);
+  const [inputState, setInputState] = useState<string>("password");
 
-  const [visbilityIconConfirm,setVisbilityIconConfirm] = useState<boolean>(false)
-  const [confirmInputState,setConfirmInputState] = useState<string>("password")
+  const [visbilityIconConfirm, setVisbilityIconConfirm] =
+    useState<boolean>(false);
+  const [confirmInputState, setConfirmInputState] =
+    useState<string>("password");
 
-  function toggleVisivilitiy(){
-    if(visibilityIcon){
-      setVisibilityIcon(false)
-      setInputState("password")
-      return
-    }else{
-      setVisibilityIcon(true)
-      setInputState("text")
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [errorCondition, setErrorCondition] = useState<boolean>(false);
+  function toggleVisivilitiy() {
+    if (visibilityIcon) {
+      setVisibilityIcon(false);
+      setInputState("password");
+      return;
+    } else {
+      setVisibilityIcon(true);
+      setInputState("text");
     }
   }
-  function toggleConfirmVisivilitiy(){
-    if(visbilityIconConfirm){
-      setVisbilityIconConfirm(false)
-      setConfirmInputState("password")
-      return
-    }else{
-      setVisbilityIconConfirm(true)
-      setConfirmInputState("text")
+  function toggleConfirmVisivilitiy() {
+    if (visbilityIconConfirm) {
+      setVisbilityIconConfirm(false);
+      setConfirmInputState("password");
+      return;
+    } else {
+      setVisbilityIconConfirm(true);
+      setConfirmInputState("text");
     }
   }
 
@@ -96,7 +100,7 @@ const MiniProfile: React.FC = () => {
   const handleSubmit = async () => {
     try {
       const res = await axios.post(`${defaultBackend}user/login`, {
-        user: user,
+        email: email,
         pwd: pwd,
       });
       localStorage.setItem("token", res.data.token);
@@ -114,22 +118,28 @@ const MiniProfile: React.FC = () => {
       await axios.post(`${defaultBackend}user/create`, {
         user: user,
         pwd: pwd,
+        email: email,
       });
       const res = await axios.post(`${defaultBackend}user/login`, {
-        user: user,
+        email: email,
         pwd: pwd,
       });
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("userName", res.data.userName);
       localStorage.setItem("userPic", res.data.userPic);
       localStorage.setItem("userId", res.data.userId);
-      setOpen(false);
-      location.reload();
       setOpenRegi(false);
+      location.reload();
     } catch (error) {
-      console.error("Error submitting data:", error);
+      setErrorCondition(true);
+      setErrorMessage("Email is already in used");
     }
   };
+  function handleEmailOnChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setEmail(e.target.value);
+    setErrorCondition(false);
+
+  }
   return (
     <>
       <div className="bg-secondary m-5 flex flex-col items-center justify-center rounded-xl sticky">
@@ -176,26 +186,86 @@ const MiniProfile: React.FC = () => {
         <Box sx={style}>
           <h1 className="font-montserrart text-2xl font-bold">Login</h1>
           <input
-            id="usernameLoginInput"
-            type="text"
-            onChange={(e) => setUser(e.target.value)}
+            type="email"
+            id="regiEmailInput"
+            value={email}
+            autoComplete="off"
+            aria-invalid={validEmail ? "false" : "true"}
+            aria-describedby="emailnote"
             className="
             text-xl font-montserrart
             bg-transparent m-5 border-white border-2 border-t-transparent border-r-transparent border-l-transparent focus:border-t-transparent"
-            placeholder="username"
+            placeholder="Email"
+            onChange={(e) => handleEmailOnChange(e)}
+            onFocus={() => setEmailFocus(true)}
+            onBlur={() => setEmailFocus(false)}
           />
-          <input
-            id="pwdLoginInput"
-            type="text"
-            onChange={(e) => setPwd(e.target.value)}
-            className=" text-xl font-montserrart
+          <p
+            id="emailnote"
+            className={
+              emailFocus && email && !validEmail
+                ? "text-white border-2 border-red-700 rounded-xl p-2"
+                : "hidden"
+            }
+          >
+            Your email address should be 4 to 24 characters long
+            <br />
+            start with a letter, and can include letters, numbers, underscores,
+            and hyphens
+          </p>
+          <div className="flex flex-row">
+            <input
+              id="pwdRegiInput"
+              type={inputState}
+              className=" text-xl font-montserrart
             bg-transparent m-5 border-white border-2 border-t-transparent border-r-transparent border-l-transparent focus:border-t-transparent"
-            placeholder="password"
-          />
+              placeholder="password"
+              aria-invalid={validPwd ? "false" : "true"}
+              aria-describedby="pwdnote"
+              value={pwd}
+              autoComplete="off"
+              onChange={(e) => setPwd(e.target.value)}
+              onFocus={() => setPwdFocus(true)}
+              onBlur={() => setPwdFocus(false)}
+            />
+            <button
+              className="mt-3"
+              onClick={() => toggleVisivilitiy()}
+              type="button"
+            >
+              {visibilityIcon ? <VisibilityIcon /> : <VisibilityOffIcon />}
+            </button>
+          </div>
+          <p
+            id="pwdnote"
+            className={
+              pwd != "" && !validPwd
+                ? "text-white border-2 border-red-700 rounded-xl p-2"
+                : "hidden"
+            }
+          >
+            8 to 24 characters.
+            <br />
+            Must include uppercase and lowercase letters, a number and a special
+            character.
+            <br />
+            Allowed special characters:{" "}
+            <span aria-label="exclamation mark">!</span>{" "}
+            <span aria-label="at symbol">@</span>{" "}
+            <span aria-label="hashtag">#</span>{" "}
+            <span aria-label="dollar sign">$</span>{" "}
+            <span aria-label="percent">%</span>
+          </p>
           <button
+            type="submit"
+            disabled={!validPwd || !validEmail}
             id="submitLoginForm"
             onClick={handleSubmit}
-            className="translate-x-28 mt-5 border-white border-2 p-2 rounded-xl text-xl font-montserrart hover:text-secondary hover:bg-primary hover:border-transparent transition-colors ease-out duration-1000"
+            className={
+              !validPwd || !validEmail
+                ? "translate-x-28 mt-5 border-gray-500 text-gray-500 border-2 p-2 rounded-xl text-xl font-montserrart"
+                : "translate-x-28 mt-5 border-white border-2 p-2 rounded-xl text-xl font-montserrart hover:text-secondary hover:bg-primary hover:border-transparent transition-colors ease-out duration-1000"
+            }
           >
             Submit
           </button>
@@ -249,7 +319,7 @@ const MiniProfile: React.FC = () => {
             text-xl font-montserrart
             bg-transparent m-5 border-white border-2 border-t-transparent border-r-transparent border-l-transparent focus:border-t-transparent"
             placeholder="Email"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => handleEmailOnChange(e)}
             onFocus={() => setEmailFocus(true)}
             onBlur={() => setEmailFocus(false)}
           />
@@ -281,14 +351,18 @@ const MiniProfile: React.FC = () => {
               onFocus={() => setPwdFocus(true)}
               onBlur={() => setPwdFocus(false)}
             />
-            <button className="mt-3" onClick={()=>toggleVisivilitiy()} type="button" >
-              {visibilityIcon ? <VisibilityIcon />:<VisibilityOffIcon />}
+            <button
+              className="mt-3"
+              onClick={() => toggleVisivilitiy()}
+              type="button"
+            >
+              {visibilityIcon ? <VisibilityIcon /> : <VisibilityOffIcon />}
             </button>
           </div>
           <p
             id="pwdnote"
             className={
-              pwd!="" && !validPwd
+              pwd != "" && !validPwd
                 ? "text-white border-2 border-red-700 rounded-xl p-2"
                 : "hidden"
             }
@@ -306,22 +380,30 @@ const MiniProfile: React.FC = () => {
             <span aria-label="percent">%</span>
           </p>
           <div className="flex flex-row">
-          <input
-            id="confirmpwdRegiInput"
-            type={confirmInputState}
-            className=" text-xl font-montserrart
+            <input
+              id="confirmpwdRegiInput"
+              type={confirmInputState}
+              className=" text-xl font-montserrart
             bg-transparent m-5 border-white border-2 border-t-transparent border-r-transparent border-l-transparent focus:border-t-transparent"
-            placeholder="re-enter password"
-            value={matchPwd}
-            aria-invalid={validMatch ? "false" : "true"}
-            aria-describedby="confirmnote"
-            autoComplete="off"
-            onChange={(e) => setMatchPwd(e.target.value)}
-            onFocus={() => setMatchFocus(true)}
-            onBlur={() => setMatchFocus(false)}
-          />
-          <button className="mt-3" onClick={()=>toggleConfirmVisivilitiy()} type="button" >
-              {visbilityIconConfirm ? <VisibilityIcon />:<VisibilityOffIcon />}
+              placeholder="re-enter password"
+              value={matchPwd}
+              aria-invalid={validMatch ? "false" : "true"}
+              aria-describedby="confirmnote"
+              autoComplete="off"
+              onChange={(e) => setMatchPwd(e.target.value)}
+              onFocus={() => setMatchFocus(true)}
+              onBlur={() => setMatchFocus(false)}
+            />
+            <button
+              className="mt-3"
+              onClick={() => toggleConfirmVisivilitiy()}
+              type="button"
+            >
+              {visbilityIconConfirm ? (
+                <VisibilityIcon />
+              ) : (
+                <VisibilityOffIcon />
+              )}
             </button>
           </div>
           <p
@@ -334,8 +416,15 @@ const MiniProfile: React.FC = () => {
           >
             Must match the first password input field.
           </p>
+          {errorCondition ? (
+            <p className="text-white border-2 border-red-700 rounded-xl p-2">
+              {errorMessage}
+            </p>
+          ) : (
+            errorMessage
+          )}
           <button
-          type="submit"
+            type="submit"
             disabled={!validName || !validPwd || !validMatch || !validEmail}
             onClick={handleSubmitCreate}
             className={

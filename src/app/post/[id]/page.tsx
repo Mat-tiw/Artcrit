@@ -5,6 +5,7 @@ import axios from "axios";
 import { MiniProfile } from "@/app/components/ui/miniprofile";
 import { Sidebar } from "@/app/components/ui/sidebar";
 import { defaultBackend } from "@/api/api.js";
+import { useRouter } from "next/navigation";
 interface Images {
   id_image: number;
   image_path: string;
@@ -40,6 +41,7 @@ interface Comment {
 
 export default function Pages({params,}: Readonly<{ params: { id: number } }>) {
   const [post, setPost] = useState<Post | null>(null);
+  const router = useRouter();
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -47,6 +49,7 @@ export default function Pages({params,}: Readonly<{ params: { id: number } }>) {
         setPost(response.data);
       } catch (error) {
         console.error("Error fetching post:", error);
+        router.push('/404')
       }
     };
     fetchPost();
