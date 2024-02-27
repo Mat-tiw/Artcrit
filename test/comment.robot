@@ -8,10 +8,8 @@ Suite Setup       Open Browser    ${URL}    chrome
 ${URL}             http://localhost:3000
 ${MainPage}        Artcrit
 ${loginBtn}        id=openInputBtn
-${userLoginInput}  id=usernameLoginInput
 ${passwordLoginInput}  id=pwdLoginInput
-${usernameInfo}         tester
-${password}             asd
+${password}             !Dd12345
 ${submitBtn}        id=submitLoginForm
 ${login}             id=username
 ${commentBtn}        id=toComment
@@ -21,14 +19,16 @@ ${commentFileInput}           id=commentFileInput
 ${filePath}           D:\\\\Desktop\\artcrit-alpha\\artcrit-early\\public\\test3.jpg
 ${refToInput}         id=refToInput
 ${commentSubmit}    id=commentSubmit
+${emailInput}         id=regiEmailInput
+${email}               tester2@gmail.com
 *** Keywords ***
 Check Page
    Wait Until Page Contains        ${MainPage}
 Click Login
    Click Element    ${loginBtn}
-Input username
-   [Arguments]    ${usernameInfo}
-   Input Text    ${userLoginInput}    ${usernameInfo}
+Input Email 
+   [Arguments]       ${email}
+   Input Text    ${emailInput}        ${email}
 Input password
   [Arguments]   ${password}
   Input Text    ${passwordLoginInput}    ${password}
@@ -56,7 +56,7 @@ CreateComment
    [Documentation]
    Check Page
    Click Login
-   Input username       ${usernameInfo}
+   Input Email     ${email}
    Input password       ${password}
    Click submitBtn
    Check Login

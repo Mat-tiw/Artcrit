@@ -215,7 +215,7 @@ const MiniProfile: React.FC = () => {
           </p>
           <div className="flex flex-row">
             <input
-              id="pwdRegiInput"
+              id="pwdLoginInput"
               type={inputState}
               className=" text-xl font-montserrart
             bg-transparent m-5 border-white border-2 border-t-transparent border-r-transparent border-l-transparent focus:border-t-transparent"
@@ -425,6 +425,7 @@ const MiniProfile: React.FC = () => {
           )}
           <button
             type="submit"
+            id="regiSubmit"
             disabled={!validName || !validPwd || !validMatch || !validEmail}
             onClick={handleSubmitCreate}
             className={

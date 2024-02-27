@@ -10,8 +10,10 @@ ${MainPage}        Artcrit
 ${loginBtn}        id=openInputBtn
 ${userLoginInput}  id=usernameLoginInput
 ${passwordLoginInput}  id=pwdLoginInput
-${usernameInfo}         tester
-${password}             asd
+${emailInput}         id=regiEmailInput
+${email}               tester2@gmail.com
+${usernameInfo}         john
+${password}             !Dd12345
 ${submitBtn}        id=submitLoginForm
 ${login}             id=username
 ${toProfile}       id=toProfile
@@ -23,6 +25,9 @@ ${editUserBio}      id=editUserBio
 ${bio}              hello bio from automated test
 ${filePath}           D:\\\\Desktop\\artcrit-alpha\\artcrit-early\\public\\test3.jpg
 ${editProfileFormSubmitBtn}      id=editProfileFormSubmitBtn
+${deleteUserBtn}            id=deleteUser
+${deleteUserFinalBtn}       id=deleteUserFinal
+${reClick}                 id=editProfileButton
 *** Keywords ***
 Check Page
    Wait Until Page Contains        ${MainPage}
@@ -31,6 +36,9 @@ Click Login
 Input username
    [Arguments]    ${usernameInfo}
    Input Text    ${userLoginInput}    ${usernameInfo}
+Input Email 
+   [Arguments]       ${email}
+   Input Text    ${emailInput}        ${email}
 Input password
   [Arguments]   ${password}
   Input Text    ${passwordLoginInput}    ${password}
@@ -43,7 +51,7 @@ Click BtnToProfile
 Check ProfilePage
   Wait Until Page Contains    ${usernameInfo}
 Click EditProfileBtn 
-  Click Button    ${editProfileBtn}
+  Click Button       ${editProfileBtn}
 Input commentFileInput
   Choose File    ${editUserAvater}   ${filePath}
 Input EditUsername
@@ -54,13 +62,19 @@ Click EditProfileFormSubmitBtn
    Click Button    ${editProfileFormSubmitBtn}
 Check EditSuccess
    Wait Until Page Contains    ${bio}
+Click DeleteUser
+  Click Button    ${deleteUserBtn}
+Click DeleteUserFinal 
+  Click Button    ${deleteUserFinalBtn}
+Click ReClickEditBtn
+  Click Button    ${reClick}
 
 *** Test Cases ***
 CreateComment
    [Documentation]
    Check Page
    Click Login
-   Input username       ${usernameInfo}
+   Input Email      ${email}
    Input password       ${password}
    Click submitBtn
    Check Login
@@ -72,3 +86,15 @@ CreateComment
    Input EditUserBio 
    Click EditProfileFormSubmitBtn 
    Check EditSuccess
+DeleteUser
+   [Documentation]
+   Check Page
+   Click Login
+   Input Email      ${email}
+   Input password       ${password}
+   Click submitBtn
+   Check Login
+   Click BtnToProfile
+   Click ReClickEditBtn
+   Click DeleteUser
+   Click DeleteUserFinal 

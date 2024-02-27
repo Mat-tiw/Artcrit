@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import multer from "multer";
 import crypto from "crypto";
 import User from "../model/User.js";
+import { error } from "console";
 function generateRandomString(length) {
   return crypto.randomBytes(length).toString("hex");
 }
@@ -70,6 +71,33 @@ export const getAllPost = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const findPostTag = async(req,res)=>{
+  try {
+    const postTag = req.body
+    const postsWithImages = await Post.findAll({
+      order: [["created_at", "DESC"]],
+      where:{post_badge:postTag},
+      include: [
+        {
+          model: Image,
+          attributes: ["id_image", "image_path"],
+        },
+        {
+          model: User,
+          attributes: ["id_user", "user_name", "user_email", "user_avatar"],
+        },
+      ],
+    });
+    if(!postsWithImages) return res.status(200).json({message:"there's no post with that tag"})
+    return res.json(postsWithImages);
+  } catch (error) {
+    console.error("Error fetching posts and images:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+
 
 export const getPost = async (req, res) => {
   const id = req.params.id;

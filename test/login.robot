@@ -11,7 +11,7 @@ ${loginBtn}        id=openInputBtn
 ${passwordLoginInput}  id=pwdLoginInput
 ${emailInput}         id=regiEmailInput
 ${email}               tester2@gmail.com
-${password}             asd
+${password}             !Dd12345
 ${submitBtn}        id=submitLoginForm
 ${login}             id=username
 ${fileInputLocation}    id=postFileInput
@@ -30,10 +30,10 @@ Click Login
    Click Element    ${loginBtn}
 Input Email 
    [Arguments]       ${email}
-   Input Text ${emailInput}        ${email}
+   Input Text    ${emailInput}        ${email}
 Input password
   [Arguments]   ${password}
-  Input Text    ${passwordLoginInput}    ${password}
+  Input Text       ${passwordLoginInput}    ${password}
 Click submitBtn
    Click Button    ${submitBtn}
 Check Login
@@ -51,7 +51,7 @@ Click CreatePost
 Check CreatedPost
   Wait Until Page Contains    ${postTitle}
 Click PostHumbergerBtn
-  Click Button    ${postHumbergerBtn}
+  Click Button          ${postHumbergerBtn}
 Click DeletePost 
   Click Button    ${deletePostBtn}
 *** Test Cases ***

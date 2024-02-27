@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { Posts } from "./components/ui/posts";
 import axios from "axios";
 import { login, userPic, defaultBackend } from "../api/api.js";
+import SearchIcon from "@mui/icons-material/Search";
 interface Image {
   id_image: number;
   image_path: string;
@@ -31,13 +32,17 @@ interface User {
 }
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [isLoading , setIsLoading]=useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [postTag, setPostTag] = useState<string>();
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<Post[]>([]);
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get(`${defaultBackend}post`);
         setPosts(response.data);
-        setIsLoading(true)
+        setIsLoading(true);
       } catch (error) {
         console.error("Error fetching posts:", error);
       }
@@ -45,14 +50,24 @@ export default function Home() {
 
     fetchPosts();
   }, []);
-  function loadBgColor(isLoading:boolean){
-    if(!isLoading)return "h-screen"
-    return ""
+  function loadBgColor(isLoading: boolean) {
+    if (!isLoading) return "h-screen";
+    return "";
   }
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+  useEffect(() => {
+    const filteredPosts = posts.filter(post =>
+      post.post_badge.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setSearchResults(filteredPosts);
+  }, [searchQuery, posts]);
+
   return (
     <React.Fragment>
       <Banner />
-      <div className={`bg-primaryBg flex flex-row ${loadBgColor(isLoading)}`}>
+      <div className={`bg-primaryBg flex flex-row min-h-screen`}>
         <div className="text-white basis-[20%] flex flex-col">
           <MiniProfile />
           <Sidebar variant="default" />
@@ -65,7 +80,7 @@ export default function Home() {
               </div>
               <div className="pl-5 mb-5 flex pt-4">
                 <Avatar
-                  src={userPic??""}
+                  src={userPic ?? ""}
                   sx={{
                     width: 58,
                     height: 58,
@@ -84,9 +99,9 @@ export default function Home() {
             </div>
           )}
           {isLoading ? (
-            posts.map((post) => (
+            searchResults.map((post) => (
               <Posts
-              showComment={false}
+                showComment={false}
                 key={post.id_post}
                 post_id={post.id_post}
                 title={post.post_title}
@@ -101,20 +116,37 @@ export default function Home() {
             ))
           ) : (
             <div className="animate-pulse p-2">
-            <Posts
-            showComment={false}
-            title="loading..."
-            badge="loading..."
-            userName="loading..."
-            images={[]}
-            userPic=""
-            toOpenModal={false}
-          />
-          </div>
+              <Posts
+                showComment={false}
+                title="loading..."
+                badge="loading..."
+                userName="loading..."
+                images={[]}
+                userPic=""
+                toOpenModal={false}
+              />
+            </div>
           )}
         </div>
         <div className="text-white basis-[20%] ">
-          <h1>{""}</h1>
+          <div className="bg-secondary m-5 flex flex-col items-center justify-center rounded-xl sticky">
+            <h1 className="font-montserrat font-bold pb-5 text-2xl">
+              search post by tag
+            </h1>
+            <form
+              action=""
+              className="flex flex-row border-b-2 border-white bg-transparent m-2 mb-4"
+            >
+              <SearchIcon />
+              <input
+                value={searchQuery}
+                onChange={handleSearch}
+                type="text"
+                placeholder="post tag"
+                className="border-0 bg-transparent outline-none"
+              />
+            </form>
+          </div>
         </div>
       </div>
     </React.Fragment>
